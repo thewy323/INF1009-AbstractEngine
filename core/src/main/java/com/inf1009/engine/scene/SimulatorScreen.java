@@ -110,20 +110,6 @@ public class SimulatorScreen implements Screen {
 
     // Setup
 
-    private void resetWorld() {
-        game.getEntityManager().clear();
-
-        agentA = new DynamicEntity(80, 120, 32, 32, 220f);
-        agentB = new DynamicEntity(140, 120, 32, 32, 220f);
-        ground = new StaticEntity(0, 40, SCREEN_W, 40);
-
-        game.getEntityManager().addEntity(agentA);
-        game.getEntityManager().addEntity(agentB);
-        game.getEntityManager().addEntity(ground);
-
-        spawnFallingItem();
-    }
-
     private void spawnFallingItem() {
         float x = (float) Math.random() * (SCREEN_W - 32);
         fallingItem = new DynamicEntity(x, SCREEN_H, 32, 32, 0f);
@@ -189,7 +175,7 @@ public class SimulatorScreen implements Screen {
 
         if (caught) {
             // Coin pickup sound
-            game.getCoinSound().play(0.1f);
+            game.getOutput().playSound("audio/coin.wav", 0.1f);
             //terminal print 
             System.out.println("Pickup: coin. Collision Detected");
             //respawn the coin

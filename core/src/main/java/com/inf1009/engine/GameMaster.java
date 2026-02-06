@@ -3,74 +3,60 @@ package com.inf1009.engine;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import com.inf1009.engine.manager.CollisionManager;
 import com.inf1009.engine.manager.EntityManager;
 import com.inf1009.engine.manager.IOManager;
 import com.inf1009.engine.manager.MovementManager;
 import com.inf1009.engine.manager.SceneManager;
+
+import com.inf1009.engine.output.Output;
+import com.inf1009.engine.output.SoundOutputDevice;
+
 import com.inf1009.engine.scene.EndScreen;
 import com.inf1009.engine.scene.SimulatorScreen;
 import com.inf1009.engine.scene.StartScreen;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
-
 
 public class GameMaster extends ApplicationAdapter {
 
     // rendering
     private SpriteBatch batch;
 
-    // Core managers
+    // core managers
     private EntityManager ent;
     private SceneManager sm;
     private MovementManager mm;
     private CollisionManager cm;
     private IOManager io;
 
-
-    //audio
-    private Music bgm;
-    private Sound coinSound;
+    // output (audio abstraction)
+    private Output output;
 
     @Override
     public void create() {
 
-        // initialize the rendering and managers
+        // init rendering
         batch = new SpriteBatch();
+
+        // init managers
         ent = new EntityManager();
         sm  = new SceneManager();
         mm  = new MovementManager();
         cm  = new CollisionManager();
         io  = new IOManager();
 
-        //Screen code
+        // init output device
+        output = new SoundOutputDevice();
+
+        // screens
         sm.addScreen("start", new StartScreen(this));
         sm.addScreen("sim", new SimulatorScreen(this));
-        sm.addScreen("end", new EndScreen(this)); //acts as pause too
+        sm.addScreen("end", new EndScreen(this)); // pause screen
         sm.setScreen("start");
 
-
-        //background music code
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("audio/bgm.wav"));
-        bgm.setLooping(true);
-        bgm.setVolume(0.4f);
-        bgm.play();
-
-        //sound effect
-        coinSound = Gdx.audio.newSound(Gdx.files.internal("audio/coin.wav"));
-
+        // background music
+        output.playMusic("audio/bgm.wav", 0.4f, true);
     }
-
-    //toggle audio
-    public void toggleAudio() {
-    if (bgm == null) return;
-    if (bgm.isPlaying()) bgm.pause();
-    else bgm.play();
-    }
-    public boolean isAudioOn() {
-        return bgm != null && bgm.isPlaying();
-    }
-
 
     @Override
     public void render() {
@@ -82,17 +68,15 @@ public class GameMaster extends ApplicationAdapter {
     public void dispose() {
         sm.dispose();
         batch.dispose();
-        if (bgm != null) bgm.dispose();
-        if (coinSound != null) coinSound.dispose();
-
+        output.stopMusic();
     }
 
+    // getters for engine access
     public SpriteBatch getBatch() { return batch; }
     public EntityManager getEntityManager() { return ent; }
     public SceneManager getSceneManager() { return sm; }
     public MovementManager getMovementManager() { return mm; }
     public CollisionManager getCollisionManager() { return cm; }
     public IOManager getIOManager() { return io; }
-    public Sound getCoinSound() { return coinSound; }
-
+    public Output getOutput() { return output; }
 }
