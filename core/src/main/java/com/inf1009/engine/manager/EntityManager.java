@@ -1,28 +1,26 @@
 package com.inf1009.engine.manager;
 
 import com.inf1009.engine.entity.AbstractGameEntity;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityManager {
 
-    private List<AbstractGameEntity> entities;
-
-    public EntityManager() {
-        entities = new ArrayList<>();
-    }
+    private final List<AbstractGameEntity> entityList = new ArrayList<>();
 
     public void addEntity(AbstractGameEntity entity) {
-        entities.add(entity);
+        entityList.add(entity);
     }
 
-    public void update(float deltaTime) {
-        for (AbstractGameEntity entity : entities) {
-            entity.update(deltaTime);
+    public void update(float dt) {
+        for (AbstractGameEntity e : entityList) {
+            e.update(dt);
         }
+        entityList.removeIf(AbstractGameEntity::isDestroyed);
     }
 
     public List<AbstractGameEntity> getEntities() {
-        return entities;
+        return entityList;
     }
 }

@@ -2,22 +2,18 @@ package com.inf1009.engine.entity;
 
 public class StaticEntity extends AbstractGameEntity implements ICollidable {
 
-    public StaticEntity(float x, float y, float width, float height) {
-        super(x, y, width, height);
+    public StaticEntity(float x, float y, float w, float h) {
+        super(x, y, w, h);
     }
 
     @Override
-    public void update(float deltaTime) {
-        // Static entities do not update position
-    }
-
-    @Override
-    public void render() {
-        // Rendering handled externally
+    public void update(float dt) {
+        // Static entity does not change state by default
     }
 
     @Override
     public void onCollision(ICollidable other) {
-        // Default collision response
+        // Default: no-op
     }
 }
+

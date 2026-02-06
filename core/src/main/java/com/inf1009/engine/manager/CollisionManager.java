@@ -5,17 +5,16 @@ import java.util.List;
 
 public class CollisionManager {
 
-    public void checkCollisions(List<ICollidable> collidables) {
-        for (int i = 0; i < collidables.size(); i++) {
-            for (int j = i + 1; j < collidables.size(); j++) {
-                ICollidable a = collidables.get(i);
-                ICollidable b = collidables.get(j);
+    private final CollisionDetection detection;
+    private final CollisionHandling handling;
 
-                if (a.getBounds().overlaps(b.getBounds())) {
-                    a.onCollision(b);
-                    b.onCollision(a);
-                }
-            }
-        }
+    public CollisionManager() {
+        this.detection = new CollisionDetection();
+        this.handling = new CollisionHandling();
+    }
+
+    public void update(List<ICollidable> collidables) {
+        List<CollisionPair> pairs = detection.detectAll(collidables);
+        handling.resolve(pairs);
     }
 }
