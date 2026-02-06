@@ -10,6 +10,9 @@ import com.inf1009.engine.manager.MovementManager;
 import com.inf1009.engine.manager.SceneManager;
 import com.inf1009.engine.scene.SimulatorScreen;
 import com.inf1009.engine.scene.StartScreen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+
 
 public class GameMaster extends ApplicationAdapter {
 
@@ -20,6 +23,10 @@ public class GameMaster extends ApplicationAdapter {
     private MovementManager mm;
     private CollisionManager cm;
     private IOManager io;
+    private Music bgm;
+    private Sound coinSound;
+
+    
 
     @Override
     public void create() {
@@ -30,10 +37,21 @@ public class GameMaster extends ApplicationAdapter {
         mm  = new MovementManager();
         cm  = new CollisionManager();
         io  = new IOManager();
+
+        //Screen code
         sm.addScreen("start", new StartScreen(this));
         Gdx.graphics.setTitle("AbstractEngine - Press SPACE to start");
         sm.addScreen("sim", new SimulatorScreen(this));
         sm.setScreen("start");
+
+
+        //Audio related code
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("audio/bgm.wav"));
+        bgm.setLooping(true);
+        bgm.setVolume(0.4f);
+        bgm.play();
+        coinSound = Gdx.audio.newSound(Gdx.files.internal("audio/coin.wav"));
+
         
     }
 
@@ -47,6 +65,9 @@ public class GameMaster extends ApplicationAdapter {
     public void dispose() {
         sm.dispose();
         batch.dispose();
+        if (bgm != null) bgm.dispose();
+        if (coinSound != null) coinSound.dispose();
+
     }
 
     public SpriteBatch getBatch() { return batch; }
@@ -55,4 +76,6 @@ public class GameMaster extends ApplicationAdapter {
     public MovementManager getMovementManager() { return mm; }
     public CollisionManager getCollisionManager() { return cm; }
     public IOManager getIOManager() { return io; }
+    public Sound getCoinSound() { return coinSound; }
+
 }

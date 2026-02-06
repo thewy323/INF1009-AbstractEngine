@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.inf1009.engine.GameMaster;
+import com.inf1009.engine.entity.AbstractGameEntity;
 import com.inf1009.engine.entity.DynamicEntity;
 import com.inf1009.engine.entity.ICollidable;
 import com.inf1009.engine.entity.StaticEntity;
@@ -13,48 +14,92 @@ import com.inf1009.engine.entity.StaticEntity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SimulatorScreen
+ *
+ * Generic demo screen:
+ * - Two controllable entities
+ * - One falling collectible
+ * - Collision + respawn loop
+ *
+ * No win condition. No scoring.
+ * Demonstrates engine capability only.
+ */
 public class SimulatorScreen implements Screen {
 
     private final GameMaster game;
-
     private SpriteBatch batch;
 
-    // textures
+    // Textures
     private Texture bg;
     private Texture playerATex;
     private Texture playerBTex;
     private Texture itemTex;
 
-    // entities
+    // Entities
     private DynamicEntity agentA;
     private DynamicEntity agentB;
     private StaticEntity ground;
     private DynamicEntity fallingItem;
 
-    private float fallSpeed = 180f;
+    private static final float FALL_SPEED = 180f;
+    private static final float SCREEN_W = 640;
+    private static final float SCREEN_H = 480;
 
     public SimulatorScreen(GameMaster game) {
         this.game = game;
     }
 
+    // Lifecycle
+
     @Override
     public void show() {
         batch = game.getBatch();
 
-        // load textures
+        // Load textures
         bg = new Texture("img/bg.png");
         playerATex = new Texture("img/playerA.png");
         playerBTex = new Texture("img/playerB.png");
         itemTex = new Texture("img/falling.png");
-        // reset world
+
+        resetWorld();
+    }
+
+    @Override
+    public void render(float dt) {
+
+        handleGlobalInput();
+
+        clearScreen();
+
+        handleMovement(dt);
+        updateEntities(dt);
+        updateFallingItem(dt);
+        handleCollisions();
+        handleCatch();
+
+        renderWorld();
+    }
+
+    @Override
+    public void hide() {}
+
+    @Override
+    public void dispose() {
+        bg.dispose();
+        playerATex.dispose();
+        playerBTex.dispose();
+        itemTex.dispose();
+    }
+
+    // Setup
+
+    private void resetWorld() {
         game.getEntityManager().clear();
 
-        // players
         agentA = new DynamicEntity(80, 120, 32, 32, 220f);
         agentB = new DynamicEntity(140, 120, 32, 32, 220f);
-
-        // ground
-        ground = new StaticEntity(0, 40, 640, 40);
+        ground = new StaticEntity(0, 40, SCREEN_W, 40);
 
         game.getEntityManager().addEntity(agentA);
         game.getEntityManager().addEntity(agentB);
@@ -63,59 +108,79 @@ public class SimulatorScreen implements Screen {
         spawnFallingItem();
     }
 
-    @Override
-    public void render(float dt) {
+    private void spawnFallingItem() {
+        float x = (float) Math.random() * (SCREEN_W - 32);
+        fallingItem = new DynamicEntity(x, SCREEN_H, 32, 32, 0f);
+        game.getEntityManager().addEntity(fallingItem);
+    }
 
+    // Update logic
+
+    private void handleGlobalInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             game.getSceneManager().setScreen("start");
-            return;
         }
+    }
 
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // movement
+    private void handleMovement(float dt) {
         game.getMovementManager().applyInput(agentA, game.getIOManager().readP1(), dt);
         game.getMovementManager().applyInput(agentB, game.getIOManager().readP2(), dt);
+    }
 
-        // update entities
+    private void updateEntities(float dt) {
         game.getEntityManager().update(dt);
+    }
 
-        // falling item movement
-        if (fallingItem != null) {
-            float ny = fallingItem.getY() - fallSpeed * dt;
-            fallingItem.setPosition(fallingItem.getX(), ny);
+    private void updateFallingItem(float dt) {
+        if (fallingItem == null) return;
 
-            // respawn if missed
-            if (ny < -40) {
-                game.getEntityManager().removeEntity(fallingItem);
-                spawnFallingItem();
-            }
+        float ny = fallingItem.getY() - FALL_SPEED * dt;
+        fallingItem.setPosition(fallingItem.getX(), ny);
+
+        if (ny < -40) {
+            game.getEntityManager().removeEntity(fallingItem);
+            spawnFallingItem();
         }
+    }
 
-        // collision system
+    private void handleCollisions() {
         List<ICollidable> collidables = new ArrayList<>();
-        game.getEntityManager().getEntities().forEach(e -> {
+        for (AbstractGameEntity e : game.getEntityManager().getEntities()) {
             if (e instanceof ICollidable) {
-                collidables.add((ICollidable) e);
-            }
-        });
+        collidables.add((ICollidable) e);
+    }
+}
+
         game.getCollisionManager().update(collidables);
+    }
 
-        // catch logic (generic demo)
-        if (fallingItem != null) {
-            if (agentA.getBounds().overlaps(fallingItem.getBounds())
-                    || agentB.getBounds().overlaps(fallingItem.getBounds())) {
+    private void handleCatch() {
+        if (fallingItem == null) return;
 
-                game.getEntityManager().removeEntity(fallingItem);
-                spawnFallingItem();
-            }
+        boolean caught =
+                agentA.getBounds().overlaps(fallingItem.getBounds()) ||
+                agentB.getBounds().overlaps(fallingItem.getBounds());
+
+        if (caught) {
+            // Coin pickup sound
+            game.getCoinSound().play(0.1f);
+
+            game.getEntityManager().removeEntity(fallingItem);
+            spawnFallingItem();
         }
+    }
 
-        // render
+    // Rendering
+
+    private void clearScreen() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    }
+
+    private void renderWorld() {
         batch.begin();
 
-        batch.draw(bg, 0, 0, 640, 480);
+        batch.draw(bg, 0, 0, SCREEN_W, SCREEN_H);
 
         batch.draw(playerATex, agentA.getX(), agentA.getY(), agentA.getW(), agentA.getH());
         batch.draw(playerBTex, agentB.getX(), agentB.getY(), agentB.getW(), agentB.getH());
@@ -129,21 +194,5 @@ public class SimulatorScreen implements Screen {
         }
 
         batch.end();
-    }
-
-    @Override public void hide() {}
-
-    @Override
-    public void dispose() {
-        bg.dispose();
-        playerATex.dispose();
-        playerBTex.dispose();
-        itemTex.dispose();
-    }
-
-    private void spawnFallingItem() {
-        float x = (float) (Math.random() * (640 - 32));
-        fallingItem = new DynamicEntity(x, 480, 32, 32, 0f);
-        game.getEntityManager().addEntity(fallingItem);
     }
 }
