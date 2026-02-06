@@ -36,8 +36,8 @@ public abstract class AbstractGameEntity {
     public final boolean isDestroyed() { return destroyed; }
     public final void destroy() { destroyed = true; }
 
-    // protected helpers for subclasses
-    protected final void setPosition(float newX, float newY) {
+    // public and protected helpers for subclasses
+    public final void setPosition(float newX, float newY) {
         this.x = newX;
         this.y = newY;
         bounds.setPosition(newX, newY);

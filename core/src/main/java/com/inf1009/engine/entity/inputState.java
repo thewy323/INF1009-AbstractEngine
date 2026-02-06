@@ -1,9 +1,9 @@
 package com.inf1009.engine.entity;
 
 /**
- * Immutable-ish input snapshot used by IOManager and MovementManager.
+ * Immutable input snapshot used by MovementManager.
  */
-public class InputState {
+public final class InputState {
 
     private final float moveX;
     private final float moveY;
@@ -15,9 +15,17 @@ public class InputState {
         this.jump = jump;
     }
 
-    public float getMoveX() { return moveX; }
-    public float getMoveY() { return moveY; }
-    public boolean isJump() { return jump; }
+    public float getMoveX() {
+        return moveX;
+    }
+
+    public float getMoveY() {
+        return moveY;
+    }
+
+    public boolean isJump() {
+        return jump;
+    }
 
     public static InputState neutral() {
         return new InputState(0f, 0f, false);

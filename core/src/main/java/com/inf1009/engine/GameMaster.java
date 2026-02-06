@@ -34,6 +34,7 @@ public class GameMaster extends ApplicationAdapter {
         Gdx.graphics.setTitle("AbstractEngine - Press SPACE to start");
         sm.addScreen("sim", new SimulatorScreen(this));
         sm.setScreen("start");
+        
     }
 
     @Override

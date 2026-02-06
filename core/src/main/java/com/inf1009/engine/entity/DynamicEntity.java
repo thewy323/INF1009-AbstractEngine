@@ -1,9 +1,8 @@
 package com.inf1009.engine.entity;
 
-/**
- * A moving entity with configurable speed and basic velocity storage.
- * Engine-level class (generic).
- */
+
+// A moving entity with configurable speed and basic velocity storage.
+
 public class DynamicEntity extends AbstractGameEntity implements Moveable, ICollidable {
 
     private float speed;

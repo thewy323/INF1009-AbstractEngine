@@ -7,6 +7,7 @@ import com.inf1009.engine.GameMaster;
 
 public class EndScreen implements Screen {
 
+    @SuppressWarnings("unused")
     private final GameMaster game;
     private ShapeRenderer shape;
 
