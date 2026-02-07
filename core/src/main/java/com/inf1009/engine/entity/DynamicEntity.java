@@ -24,6 +24,7 @@ public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICol
     // UML: update(dt) applies gravity and moves using velocity
     @Override
     public void update(float dt) {
+        isGrounded = false;
         applyGravity(gravity, dt);
         move(velocityX, velocityY, dt);
     }
@@ -81,6 +82,9 @@ public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICol
     // UML getters
     public float getVelocityX() { return velocityX; }
     public float getVelocityY() { return velocityY; }
+    public void setVelocityX(float vx) { this.velocityX = vx; }
+    public void setVelocityY(float vy) { this.velocityY = vy; }
+
 
     // extra getters/setters that help other code and UML
     public float getSpeed() { return speed; }

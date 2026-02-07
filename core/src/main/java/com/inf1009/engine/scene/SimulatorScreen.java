@@ -78,8 +78,9 @@ public class SimulatorScreen extends AbstractScreen {
         handleMovement(dt);
         updateEntities(dt);
         updateFallingItem(dt);
-        handleCollisions();
+    
         handleCatch();
+        handleCollisions();
         renderWorld();
     }
 
