@@ -26,7 +26,7 @@ public class SimulatorScreen extends AbstractScreen {
     private DynamicEntity agentA;
     private DynamicEntity agentB;
     private StaticEntity ground;
-    private DynamicEntity fallingItem;
+    private StaticEntity fallingItem;
 
     private static final float FALL_SPEED = 120f;
     private static final float SCREEN_W = 640;
@@ -85,9 +85,10 @@ public class SimulatorScreen extends AbstractScreen {
 
     private void spawnFallingItem() {
         float x = (float) Math.random() * (SCREEN_W - 32);
-        fallingItem = new DynamicEntity(x, SCREEN_H, 32, 32, 0f);
+        fallingItem = new StaticEntity(x, SCREEN_H, 32, 32);
         game.getEntityManager().addEntity(fallingItem);
     }
+
 
     private void handleMovement(float dt) {
         game.getMovementManager().applyInput(agentA, game.getIOManager().readP1(), dt);
@@ -111,9 +112,11 @@ public class SimulatorScreen extends AbstractScreen {
 
         if (ny < -40) {
             game.getEntityManager().removeEntity(fallingItem);
+            fallingItem = null;
             spawnFallingItem();
         }
     }
+
 
     private void handleCollisions() {
         List<ICollidable> collidables = new ArrayList<>();

@@ -1,5 +1,8 @@
 package com.inf1009.engine.manager;
 
+import com.inf1009.engine.collision.CollisionDetection;
+import com.inf1009.engine.collision.CollisionHandling;
+import com.inf1009.engine.collision.CollisionPair;
 import com.inf1009.engine.entity.ICollidable;
 
 import java.util.ArrayList;

@@ -14,8 +14,8 @@ public class StartScreen extends AbstractScreen {
     private SpriteBatch batch;
     private BitmapFont font;
 
-    private float startX = 220, startY = 240, startW = 200, startH = 55;
-    private float exitX  = 220, exitY  = 160, exitW  = 200, exitH  = 55;
+    private final float startX = 220, startY = 240, startW = 200, startH = 55;
+    private final float exitX  = 220, exitY  = 160, exitW  = 200, exitH  = 55;
 
     public StartScreen(GameMaster game) {
         super(game);
@@ -23,9 +23,9 @@ public class StartScreen extends AbstractScreen {
 
     @Override
     public void show() {
-        shape = new ShapeRenderer();
+        if (shape == null) shape = new ShapeRenderer();
         batch = game.getBatch();
-        font = new BitmapFont();
+        if (font == null) font = new BitmapFont();
     }
 
     @Override
@@ -33,13 +33,11 @@ public class StartScreen extends AbstractScreen {
         Gdx.gl.glClearColor(0.08f, 0.08f, 0.08f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Draw buttons
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.rect(startX, startY, startW, startH);
         shape.rect(exitX, exitY, exitW, exitH);
         shape.end();
 
-        // Draw text
         batch.begin();
         font.draw(batch, "ABSTRACT ENGINE DEMO", 200, 360);
         font.draw(batch, "START", startX + 75, startY + 35);
@@ -47,13 +45,11 @@ public class StartScreen extends AbstractScreen {
         font.draw(batch, "SPACE = Start", 245, 120);
         batch.end();
 
-        // Keyboard start
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             game.getSceneManager().setScreen("sim");
             return;
         }
 
-        // Mouse input
         if (Gdx.input.justTouched()) {
             int mx = Gdx.input.getX();
             int my = Gdx.graphics.getHeight() - Gdx.input.getY();
@@ -72,7 +68,7 @@ public class StartScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-        if (shape != null) shape.dispose();
-        if (font != null) font.dispose();
+        if (shape != null) { shape.dispose(); shape = null; }
+        if (font != null)  { font.dispose();  font = null; }
     }
 }

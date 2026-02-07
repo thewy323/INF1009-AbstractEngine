@@ -1,6 +1,7 @@
-package com.inf1009.engine.manager;
+package com.inf1009.engine.collision;
 
 import com.inf1009.engine.entity.ICollidable;
+
 import java.util.ArrayList;
 import java.util.List;
 
