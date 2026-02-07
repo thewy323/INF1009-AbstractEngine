@@ -1,6 +1,6 @@
 package com.inf1009.engine.entity;
 
-public class DynamicEntity extends AbstractGameEntity implements Moveable, ICollidable {
+public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICollidable {
 
     // Movement speed (horizontal movement)
     private float speed;
