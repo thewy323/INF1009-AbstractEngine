@@ -6,7 +6,7 @@ public class Mouse extends AbstractInputDevice {
 
     @Override
     public InputState readInput() {
-        // Not used yet, return neutral input
+        // Placeholder device, returns no movement
         return InputState.neutral();
     }
 }

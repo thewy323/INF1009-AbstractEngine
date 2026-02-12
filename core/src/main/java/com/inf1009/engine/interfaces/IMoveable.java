@@ -4,6 +4,6 @@ import com.inf1009.engine.entity.InputState;
 
 public interface IMoveable {
 
-    // Apply input-based movement for this frame
+    // Applies input-driven movement for this frame
     void movement(InputState input, float dt);
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class EntityManager {
 
+    // Stores all active entities
     private final List<AbstractGameEntity> entities = new ArrayList<>();
 
     public void addEntity(AbstractGameEntity e) {
@@ -23,16 +24,17 @@ public class EntityManager {
         entities.clear();
     }
 
-    // Read-only view so other systems cannot modify the list
+    // Read-only access for other systems
     public List<AbstractGameEntity> getEntities() {
         return Collections.unmodifiableList(entities);
     }
 
+    // Updates all entities and removes destroyed ones
     public void update(float dt) {
         for (AbstractGameEntity e : entities) {
             e.update(dt);
         }
-        // Remove destroyed entities safely
+
         entities.removeIf(AbstractGameEntity::isDestroyed);
     }
 }

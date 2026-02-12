@@ -9,10 +9,10 @@ import java.util.List;
 
 public class CollisionManager {
 
-    // Internal list of registered collidables
+    // Registered collidable objects
     private final List<ICollidable> collidables = new ArrayList<>();
 
-    // Helpers
+    // Detection and resolution helpers
     private final CollisionDetection detection;
     private final CollisionHandling handling;
 
@@ -21,7 +21,7 @@ public class CollisionManager {
         this.handling = new CollisionHandling();
     }
 
-    // Register object for collision checking
+    // Registers object for collision checks
     public void register(ICollidable c) {
         if (c == null) return;
         if (!collidables.contains(c)) {
@@ -29,23 +29,23 @@ public class CollisionManager {
         }
     }
 
-    // Remove object from collision checking
+    // Unregisters object
     public void unregister(ICollidable c) {
         collidables.remove(c);
     }
 
-    // Clear all registered objects
+    // Clears all registered objects
     public void clear() {
         collidables.clear();
     }
 
-    // Update using internal list
+    // Runs detection using internal registry
     public void update() {
         if (collidables.isEmpty()) return;
         detection.detectAll(collidables, handling);
     }
 
-    // Update using provided list
+    // Runs detection using external list
     public void update(List<ICollidable> list) {
         if (list == null || list.isEmpty()) return;
         detection.detectAll(list, handling);

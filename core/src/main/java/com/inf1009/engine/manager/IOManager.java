@@ -8,23 +8,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// Coordinates input devices (engine-level)
 public class IOManager {
 
+    // Registered input devices
     private final List<AbstractInputDevice> devices = new ArrayList<>();
 
     public IOManager() {
-        // default devices (simulation can still ignore these)
+
+        // Default keyboard presets
         devices.add(Keyboard.wasd());
         devices.add(Keyboard.arrows());
     }
 
-    // Read input from a device index
+    // Reads input from a specific device
     public InputState readDevice(int index) {
-        if (index < 0 || index >= devices.size()) return InputState.neutral();
+        if (index < 0 || index >= devices.size()) {
+            return InputState.neutral();
+        }
         return devices.get(index).readInput();
     }
 
+    // Read-only device list
     public List<AbstractInputDevice> getDevices() {
         return Collections.unmodifiableList(devices);
     }

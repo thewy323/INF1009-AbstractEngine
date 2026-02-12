@@ -4,16 +4,16 @@ import com.badlogic.gdx.math.Rectangle;
 
 public abstract class AbstractGameEntity {
 
-    // Position + size
+    // Core transform data
     private float x;
     private float y;
     private float w;
     private float h;
 
-    // Collision bounds (kept in sync with x,y,w,h)
+    // Bounding box used for collision detection
     private final Rectangle bounds;
 
-    // Lifecycle flag (EntityManager can remove if destroyed)
+    // Marks entity for removal by manager
     private boolean destroyed;
 
     protected AbstractGameEntity(float x, float y, float w, float h) {
@@ -25,32 +25,32 @@ public abstract class AbstractGameEntity {
         this.destroyed = false;
     }
 
-    // Each entity defines its own update behaviour
+    // Called every frame by EntityManager
     public abstract void update(float dt);
 
-    // Bounds used for collision checks
+    // Returns collision bounds
     public final Rectangle getBounds() {
         return bounds;
     }
 
-    // Basic getters
+    // Position + size accessors
     public final float getX() { return x; }
     public final float getY() { return y; }
     public final float getW() { return w; }
     public final float getH() { return h; }
 
-    // Destroy flag helpers
+    // Lifecycle state
     public final boolean isDestroyed() { return destroyed; }
     public final void destroy() { destroyed = true; }
 
-    // Updates position and keeps bounds in sync
+    // Updates position and keeps bounds aligned
     public final void setPosition(float newX, float newY) {
         this.x = newX;
         this.y = newY;
         bounds.setPosition(newX, newY);
     }
 
-    // Updates size and keeps bounds in sync
+    // Updates size and keeps bounds aligned
     protected final void setSize(float newW, float newH) {
         this.w = newW;
         this.h = newH;

@@ -4,12 +4,12 @@ import com.badlogic.gdx.math.Rectangle;
 
 public interface ICollidable {
 
-    // Returns the rectangle used for overlap checks
+    // Provides bounding box for collision detection
     Rectangle getBounds();
 
-    // Used to ignore non-solid things if needed
+    // Indicates whether object blocks other objects
     boolean isSolid();
 
-    // Collision callback (engine stays generic)
+    // Callback invoked when collision occurs
     void onCollision(ICollidable other);
 }
