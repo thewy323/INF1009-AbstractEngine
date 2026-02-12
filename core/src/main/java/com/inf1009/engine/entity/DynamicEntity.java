@@ -12,10 +12,6 @@ public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICol
     private float gravity = -900f;
     private float jumpImpulse = 380f;
 
-    // Optional world clamp (keeps behavior similar to before)
-    private static final float WORLD_WIDTH = 640f;
-    private static final float WORLD_HEIGHT = 480f;
-
     public DynamicEntity(float x, float y, float w, float h, float speed) {
         super(x, y, w, h);
         this.speed = speed;
@@ -55,14 +51,6 @@ public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICol
     public void move(float dx, float dy, float dt) {
         float nx = getX() + dx * dt;
         float ny = getY() + dy * dt;
-
-        // clamp inside world bounds
-        if (nx < 0) nx = 0;
-        if (nx + getW() > WORLD_WIDTH) nx = WORLD_WIDTH - getW();
-
-        if (ny < 0) ny = 0;
-        if (ny + getH() > WORLD_HEIGHT) ny = WORLD_HEIGHT - getH();
-
         setPosition(nx, ny);
     }
 

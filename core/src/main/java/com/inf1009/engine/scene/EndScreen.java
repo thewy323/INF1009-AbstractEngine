@@ -8,7 +8,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.inf1009.engine.GameMaster;
 
-public class EndScreen extends AbstractScreen {
+public class EndScreen implements IScreen {
+
+    private final GameMaster game;
 
     private SpriteBatch batch;
     private ShapeRenderer shape;
@@ -19,15 +21,14 @@ public class EndScreen extends AbstractScreen {
     private float exitX   = 220, exitY   = 100, exitW   = 200, exitH   = 60;
 
     public EndScreen(GameMaster game) {
-        super(game);
+        this.game = game;
     }
 
     @Override
     public void show() {
         batch = game.getBatch();
-        shape = new ShapeRenderer();
-        font = new BitmapFont();
-        Gdx.graphics.setTitle("Paused");
+        if (shape == null) shape = new ShapeRenderer();
+        if (font == null) font = new BitmapFont();
     }
 
     @Override
@@ -70,6 +71,8 @@ public class EndScreen extends AbstractScreen {
 
         return mx >= x && mx <= x + w && my >= y && my <= y + h;
     }
+
+    @Override public void hide() { }
 
     @Override
     public void dispose() {

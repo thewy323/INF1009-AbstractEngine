@@ -1,31 +1,33 @@
 package com.inf1009.engine.scene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.inf1009.engine.GameMaster;
 
-public class StartScreen extends AbstractScreen {
+public class StartScreen implements IScreen {
 
-    private ShapeRenderer shape;
+    private final GameMaster game;
+
     private SpriteBatch batch;
+    private ShapeRenderer shape;
     private BitmapFont font;
 
-    private final float startX = 220, startY = 240, startW = 200, startH = 55;
-    private final float exitX  = 220, exitY  = 160, exitW  = 200, exitH  = 55;
+    private float startX = 220, startY = 240, startW = 200, startH = 60;
+    private float exitX  = 220, exitY  = 160, exitW  = 200, exitH  = 60;
 
     public StartScreen(GameMaster game) {
-        super(game);
+        this.game = game;
     }
 
     @Override
     public void show() {
-        if (shape == null) shape = new ShapeRenderer();
         batch = game.getBatch();
-        if (font == null) font = new BitmapFont();
+        shape = new ShapeRenderer();
+        font = new BitmapFont();
+        Gdx.graphics.setTitle("AbstractEngine");
     }
 
     @Override
@@ -39,36 +41,31 @@ public class StartScreen extends AbstractScreen {
         shape.end();
 
         batch.begin();
-        font.draw(batch, "ABSTRACT ENGINE DEMO", 200, 360);
-        font.draw(batch, "START", startX + 75, startY + 35);
-        font.draw(batch, "EXIT",  exitX  + 80, exitY  + 35);
-        font.draw(batch, "SPACE = Start", 245, 120);
+        font.draw(batch, "START", startX + 70, startY + 38);
+        font.draw(batch, "EXIT",  exitX + 80,  exitY + 38);
         batch.end();
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+        if (isClicked(startX, startY, startW, startH)) {
             game.getSceneManager().setScreen("sim");
-            return;
-        }
-
-        if (Gdx.input.justTouched()) {
-            int mx = Gdx.input.getX();
-            int my = Gdx.graphics.getHeight() - Gdx.input.getY();
-
-            if (inside(mx, my, startX, startY, startW, startH)) {
-                game.getSceneManager().setScreen("sim");
-            } else if (inside(mx, my, exitX, exitY, exitW, exitH)) {
-                Gdx.app.exit();
-            }
+        } else if (isClicked(exitX, exitY, exitW, exitH)) {
+            Gdx.app.exit();
         }
     }
 
-    private boolean inside(float px, float py, float x, float y, float w, float h) {
-        return px >= x && px <= x + w && py >= y && py <= y + h;
+    private boolean isClicked(float x, float y, float w, float h) {
+        if (!Gdx.input.justTouched()) return false;
+
+        float mx = Gdx.input.getX();
+        float my = Gdx.graphics.getHeight() - Gdx.input.getY();
+
+        return mx >= x && mx <= x + w && my >= y && my <= y + h;
     }
+
+    @Override public void hide() {}
 
     @Override
     public void dispose() {
-        if (shape != null) { shape.dispose(); shape = null; }
-        if (font != null)  { font.dispose();  font = null; }
+        if (shape != null) shape.dispose();
+        if (font != null) font.dispose();
     }
 }

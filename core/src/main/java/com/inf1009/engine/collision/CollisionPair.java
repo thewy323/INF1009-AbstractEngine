@@ -2,6 +2,7 @@ package com.inf1009.engine.collision;
 
 import com.inf1009.engine.entity.ICollidable;
 
+// A simple container for a collision between two objects
 public class CollisionPair {
     private final ICollidable a;
     private final ICollidable b;

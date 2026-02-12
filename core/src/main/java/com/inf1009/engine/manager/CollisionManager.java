@@ -45,7 +45,7 @@ public class CollisionManager {
         handling.resolve(pairs);
     }
 
-    // Detect + resolve using a provided list (screen decides what to check)
+    // Detect + resolve using a provided list 
     public void update(List<ICollidable> list) {
         if (list == null || list.isEmpty()) return;
         List<CollisionPair> pairs = detection.detectAll(list);
