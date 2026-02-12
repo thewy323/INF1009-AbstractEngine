@@ -8,8 +8,8 @@ import java.util.List;
 
 public class EntityManager {
 
-    // Stores all active entities
     private final List<AbstractGameEntity> entities = new ArrayList<>();
+    private final List<AbstractGameEntity> entitiesToRemove = new ArrayList<>();
 
     public void addEntity(AbstractGameEntity e) {
         if (e == null) return;
@@ -17,22 +17,27 @@ public class EntityManager {
     }
 
     public void removeEntity(AbstractGameEntity e) {
-        entities.remove(e);
+        entitiesToRemove.add(e);
     }
 
     public void clear() {
         entities.clear();
+        entitiesToRemove.clear();
     }
 
-    // Read-only access for other systems
     public List<AbstractGameEntity> getEntities() {
         return Collections.unmodifiableList(entities);
     }
 
-    // Updates all entities and removes destroyed ones
     public void update(float dt) {
+
         for (AbstractGameEntity e : entities) {
             e.update(dt);
+        }
+
+        if (!entitiesToRemove.isEmpty()) {
+            entities.removeAll(entitiesToRemove);
+            entitiesToRemove.clear();
         }
 
         entities.removeIf(AbstractGameEntity::isDestroyed);

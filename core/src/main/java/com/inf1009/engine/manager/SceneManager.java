@@ -7,10 +7,7 @@ import com.inf1009.engine.interfaces.IScreen;
 
 public class SceneManager {
 
-    // Registered screens
     private final Map<String, IScreen> screens = new HashMap<>();
-
-    // Currently active screen
     private IScreen current;
 
     public void addScreen(String name, IScreen screen) {
@@ -18,7 +15,6 @@ public class SceneManager {
         screens.put(name, screen);
     }
 
-    // Switches active screen
     public void setScreen(String name) {
 
         IScreen next = screens.get(name);
@@ -30,14 +26,26 @@ public class SceneManager {
         current.show();
     }
 
-    // Delegates render to active screen
+    public IScreen getCurrentScreen() {
+        return current;
+    }
+
     public void render(float dt) {
         if (current != null) {
             current.render(dt);
         }
     }
 
-    // Disposes all screens
+
+    public void update(float dt) {
+        render(dt);
+    }
+
+
+    public void transition(String name) {
+        setScreen(name);
+    }
+
     public void dispose() {
         for (IScreen s : screens.values()) {
             s.dispose();

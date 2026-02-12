@@ -4,23 +4,20 @@ import com.inf1009.engine.entity.InputState;
 import com.inf1009.engine.input.AbstractInputDevice;
 import com.inf1009.engine.input.Keyboard;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class IOManager {
 
-    // Registered input devices
     private final List<AbstractInputDevice> devices = new ArrayList<>();
 
-    public IOManager() {
+    // Simple action-to-key binding map
+    private final Map<String, Integer> bindings = new HashMap<>();
 
-        // Default keyboard presets
+    public IOManager() {
         devices.add(Keyboard.wasd());
         devices.add(Keyboard.arrows());
     }
 
-    // Reads input from a specific device
     public InputState readDevice(int index) {
         if (index < 0 || index >= devices.size()) {
             return InputState.neutral();
@@ -28,7 +25,6 @@ public class IOManager {
         return devices.get(index).readInput();
     }
 
-    // Read-only device list
     public List<AbstractInputDevice> getDevices() {
         return Collections.unmodifiableList(devices);
     }
@@ -36,5 +32,24 @@ public class IOManager {
     public void addDevice(AbstractInputDevice device) {
         if (device == null) return;
         devices.add(device);
+    }
+
+    // UML requirement
+    public void update() {
+        // Reserved for future polling logic
+    }
+
+    // UML requirement
+    public InputState getInputState(int index) {
+        return readDevice(index);
+    }
+
+    // UML requirement
+    public void setBinding(String action, int keyCode) {
+        bindings.put(action, keyCode);
+    }
+
+    public Integer getBinding(String action) {
+        return bindings.get(action);
     }
 }
