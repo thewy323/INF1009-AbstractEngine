@@ -2,7 +2,6 @@ package com.inf1009.engine.manager;
 
 import com.inf1009.engine.collision.CollisionDetection;
 import com.inf1009.engine.collision.CollisionHandling;
-import com.inf1009.engine.collision.CollisionPair;
 import com.inf1009.engine.entity.ICollidable;
 
 import java.util.ArrayList;
@@ -10,50 +9,45 @@ import java.util.List;
 
 public class CollisionManager {
 
-    // Internal list (optional mode: register/unregister)
+    // Internal list of registered collidables
     private final List<ICollidable> collidables = new ArrayList<>();
 
-    // Split responsibilities (UML: detection + handling)
+    // Helpers
     private final CollisionDetection detection;
     private final CollisionHandling handling;
 
     public CollisionManager() {
-        // Create helpers once
         this.detection = new CollisionDetection();
         this.handling = new CollisionHandling();
     }
 
-    // Add a collidable into internal list
+    // Register object for collision checking
     public void register(ICollidable c) {
         if (c == null) return;
-        if (!collidables.contains(c)) collidables.add(c);
+        if (!collidables.contains(c)) {
+            collidables.add(c);
+        }
     }
 
-    // Remove a collidable from internal list
+    // Remove object from collision checking
     public void unregister(ICollidable c) {
         collidables.remove(c);
     }
 
-    // Clear internal list (reset)
-    public void clearCollisions() {
+    // Clear all registered objects
+    public void clear() {
         collidables.clear();
     }
 
-    // Detect + resolve using internal list
-    public void checkCollisions() {
-        List<CollisionPair> pairs = detection.detectAll(collidables);
-        handling.resolve(pairs);
+    // Update using internal list
+    public void update() {
+        if (collidables.isEmpty()) return;
+        detection.detectAll(collidables, handling);
     }
 
-    // Detect + resolve using a provided list 
+    // Update using provided list
     public void update(List<ICollidable> list) {
         if (list == null || list.isEmpty()) return;
-        List<CollisionPair> pairs = detection.detectAll(list);
-        handling.resolve(pairs);
-    }
-
-    // Convenience: update internal list mode
-    public void update() {
-        checkCollisions();
+        detection.detectAll(list, handling);
     }
 }
