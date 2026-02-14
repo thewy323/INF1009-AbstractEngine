@@ -15,6 +15,8 @@ public class GameMaster extends ApplicationAdapter {
     private MovementManager mm;
     private CollisionManager cm;
     private IOManager io;
+    private SoundManager snd;
+
 
     @Override
     public void create() {
@@ -26,6 +28,7 @@ public class GameMaster extends ApplicationAdapter {
         mm  = new MovementManager();
         cm  = new CollisionManager();
         io  = new IOManager();
+        snd = new SoundManager(); 
 
         sm.addScreen("start", new StartScreen(this));
         sm.addScreen("sim", new SimulatorScreen(this));
@@ -44,6 +47,8 @@ public class GameMaster extends ApplicationAdapter {
     public void dispose() {
         sm.dispose();
         batch.dispose();
+        if (snd != null) snd.dispose();
+        batch.dispose();
     }
 
     public SpriteBatch getBatch() { return batch; }
@@ -52,4 +57,5 @@ public class GameMaster extends ApplicationAdapter {
     public MovementManager getMovementManager() { return mm; }
     public CollisionManager getCollisionManager() { return cm; }
     public IOManager getIOManager() { return io; }
+    public SoundManager getSoundManager() { return snd;}
 }

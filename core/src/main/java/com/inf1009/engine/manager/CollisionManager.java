@@ -20,9 +20,7 @@ public class CollisionManager {
 
     public void register(ICollidable c) {
         if (c == null) return;
-        if (!collidables.contains(c)) {
-            collidables.add(c);
-        }
+        if (!collidables.contains(c)) collidables.add(c);
     }
 
     public void unregister(ICollidable c) {
@@ -33,27 +31,19 @@ public class CollisionManager {
         collidables.clear();
     }
 
-    // Internal list update
-    public void update() {
-
-        if (collidables.isEmpty()) return;
+    // returns how many collision pairs happened this frame
+    public int updateAndCount() {
+        if (collidables.isEmpty()) return 0;
 
         List<ICollidable[]> collisions = detection.detectAll(collidables);
-
         for (ICollidable[] pair : collisions) {
             handling.resolve(pair[0], pair[1]);
         }
+        return collisions.size();
     }
 
-    // External list update
-    public void update(List<ICollidable> list) {
-
-        if (list == null || list.isEmpty()) return;
-
-        List<ICollidable[]> collisions = detection.detectAll(list);
-
-        for (ICollidable[] pair : collisions) {
-            handling.resolve(pair[0], pair[1]);
-        }
+    // keep old signature if you want it for other places
+    public void update() {
+        updateAndCount();
     }
 }
