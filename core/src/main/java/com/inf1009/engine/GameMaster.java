@@ -2,6 +2,7 @@ package com.inf1009.engine;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.inf1009.engine.manager.*;
 import com.inf1009.engine.scene.*;
@@ -10,52 +11,55 @@ public class GameMaster extends ApplicationAdapter {
 
     private SpriteBatch batch;
 
-    private EntityManager ent;
+    private EntityManager em;
     private SceneManager sm;
     private MovementManager mm;
     private CollisionManager cm;
-    private IOManager io;
+    private InputManager io;
     private SoundManager snd;
-
 
     @Override
     public void create() {
-
         batch = new SpriteBatch();
 
-        ent = new EntityManager();
-        sm  = new SceneManager();
-        mm  = new MovementManager();
-        cm  = new CollisionManager();
-        io  = new IOManager();
-        snd = new SoundManager(); 
+        em = new EntityManager();
+        sm = new SceneManager();
+        mm = new MovementManager();
+        cm = new CollisionManager();
+        io = new InputManager();
+        snd = new SoundManager();
 
-        sm.addScreen("start", new StartScreen(this));
-        sm.addScreen("sim", new SimulatorScreen(this));
-        sm.addScreen("end", new EndScreen(this));
+        io.registerDevice(com.inf1009.engine.input.KeyboardDevice.wasd());
 
-        sm.setScreen("start");
+        sm.addScreen("start", new StartScene());
+        sm.addScreen("sim", new SimulatorScene(this));
+        sm.addScreen("end", new EndScene());
+        sm.setScreen("sim");
     }
 
     @Override
     public void render() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         float dt = Gdx.graphics.getDeltaTime();
-        sm.render(dt);
+        sm.update(dt);
     }
 
     @Override
     public void dispose() {
         sm.dispose();
-        batch.dispose();
-        if (snd != null) snd.dispose();
-        batch.dispose();
+        if (batch != null) batch.dispose();
     }
 
-    public SpriteBatch getBatch() { return batch; }
-    public EntityManager getEntityManager() { return ent; }
+    public EntityManager getEntityManager() { return em; }
     public SceneManager getSceneManager() { return sm; }
     public MovementManager getMovementManager() { return mm; }
     public CollisionManager getCollisionManager() { return cm; }
-    public IOManager getIOManager() { return io; }
-    public SoundManager getSoundManager() { return snd;}
+
+    public InputManager getInputManager() { return io; }
+    public InputManager getIOManager() { return io; }
+
+    public SoundManager getSoundManager() { return snd; }
+    public SpriteBatch getBatch() { return batch; }
 }

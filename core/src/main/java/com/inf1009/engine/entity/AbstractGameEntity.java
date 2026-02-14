@@ -5,65 +5,44 @@ import com.badlogic.gdx.math.Rectangle;
 
 public abstract class AbstractGameEntity {
 
-    // Core transform data
-    private float x;
-    private float y;
-    private float w;
-    private float h;
+    protected float x;
+    protected float y;
+    protected float width;
+    protected float height;
+    protected Rectangle bounds;
+    protected boolean destroyed;
 
-    // Bounding box used for collision detection
-    private final Rectangle bounds;
-
-    // Lifecycle flag indicating whether entity should be removed
-    private boolean isDestroyed;
-
-    protected AbstractGameEntity(float x, float y, float w, float h) {
+    public AbstractGameEntity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
-        this.w = w;
-        this.h = h;
-        this.bounds = new Rectangle(x, y, w, h);
-        this.isDestroyed = false;
+        this.width = width;
+        this.height = height;
+        this.bounds = new Rectangle(x, y, width, height);
+        this.destroyed = false;
     }
 
-    // Called every frame by EntityManager
-    public abstract void update(float dt);
-
-    // Entities must define how they render themselves
+    public abstract void update(float deltaTime);
     public abstract void render(ShapeRenderer shape);
 
-    // Returns collision bounds
-    public final Rectangle getBounds() {
-        return bounds;
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getWidth() { return width; }
+    public float getHeight() { return height; }
+
+    public Rectangle getBounds() { return bounds; }
+
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+        this.bounds.setPosition(x, y);
     }
 
-    // Position + size accessors
-    public final float getX() { return x; }
-    public final float getY() { return y; }
-    public final float getW() { return w; }
-    public final float getH() { return h; }
-
-    // Lifecycle state
-    public final boolean isDestroyed() {
-        return isDestroyed;
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+        this.bounds.setSize(width, height);
     }
 
-    // Marks entity for removal
-    public final void destroy() {
-        isDestroyed = true;
-    }
-
-    // Updates position and keeps bounds aligned
-    public final void setPosition(float newX, float newY) {
-        this.x = newX;
-        this.y = newY;
-        bounds.setPosition(newX, newY);
-    }
-
-    // Updates size and keeps bounds aligned
-    protected final void setSize(float newW, float newH) {
-        this.w = newW;
-        this.h = newH;
-        bounds.setSize(newW, newH);
-    }
+    public void destroy() { this.destroyed = true; }
+    public boolean isDestroyed() { return destroyed; }
 }

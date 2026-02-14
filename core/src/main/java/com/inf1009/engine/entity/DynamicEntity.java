@@ -1,108 +1,79 @@
 package com.inf1009.engine.entity;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.interfaces.ICollidable;
-import com.inf1009.engine.interfaces.IMoveable;
+import com.inf1009.engine.interfaces.IMovable;
 
-public class DynamicEntity extends AbstractGameEntity implements IMoveable, ICollidable {
+public class DynamicEntity extends AbstractGameEntity implements IMovable, ICollidable {
 
-    private float velocityX = 0f;
-    private float velocityY = 0f;
-    private float speed;
+    private Vector2 velocity = new Vector2();
+    private Vector2 acceleration = new Vector2();
+    private Vector2 direction = new Vector2(1, 0);
+    private float speed = 0f;
 
-    private boolean isGrounded = false;
-
-    private float gravity = -900f;
-
-    public DynamicEntity(float x, float y, float w, float h, float speed) {
-        super(x, y, w, h);
-        this.speed = speed;
+    public DynamicEntity(float x, float y, float width, float height) {
+        super(x, y, width, height);
     }
 
     @Override
-    public void update(float dt) {
-        isGrounded = false;
-        applyGravity(dt);
-        applyVelocity(dt);
-    }
+    public Vector2 getVelocity() { return velocity; }
 
-    private void applyGravity(float dt) {
-        if (!isGrounded) {
-            velocityY += gravity * dt;
-        }
-    }
-
-    private void applyVelocity(float dt) {
-        float nx = getX() + velocityX * dt;
-        float ny = getY() + velocityY * dt;
-        setPosition(nx, ny);
-    }
-
-    // IMoveable method
     @Override
-    public void move(float dx, float dy) {
-        float nx = getX() + dx;
-        float ny = getY() + dy;
-        setPosition(nx, ny);
-    }
-
-    public void jump(float force) {
-        velocityY = force;
-        isGrounded = false;
-    }
-
-    public void landOn(float groundY) {
-        setPosition(getX(), groundY);
-        velocityY = 0f;
-        isGrounded = true;
-    }
-
-    // Velocity accessors
-    @Override
-    public float getVelocityX() {
-        return velocityX;
+    public void setVelocity(Vector2 v) {
+        if (v == null) return;
+        this.velocity.set(v);
     }
 
     @Override
-    public float getVelocityY() {
-        return velocityY;
+    public Vector2 getAcceleration() { return acceleration; }
+
+    @Override
+    public void applyAcceleration(Vector2 a) {
+        if (a == null) return;
+        this.acceleration.add(a);
+    }
+
+    public Vector2 getDirection() { return direction; }
+
+    @Override
+    public void setDirection(float dx, float dy) {
+        this.direction.set(dx, dy);
+        if (this.direction.len2() > 0) this.direction.nor();
+    }
+
+    public float getSpeed() { return speed; }
+
+    @Override
+    public void setSpeed(float speed) { this.speed = speed; }
+
+    @Override
+    public void applyVelocity(float dt) {
+        velocity.x = direction.x * speed + velocity.x + (acceleration.x * dt);
+        velocity.y = direction.y * speed + velocity.y + (acceleration.y * dt);
     }
 
     @Override
-    public void setVelocityX(float vx) {
-        this.velocityX = vx;
-    }
-
-    @Override
-    public void setVelocityY(float vy) {
-        this.velocityY = vy;
-    }
-
-    @Override
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    public boolean isGrounded() {
-        return isGrounded;
-    }
-
-    @Override
-    public void onCollision(ICollidable other) {
-        setVelocityX(-getVelocityX());
-    }
-
-    @Override
-    public boolean isSolid() {
-        return true;
+    public void update(float deltaTime) {
+        applyVelocity(deltaTime);
+        x += velocity.x * deltaTime;
+        y += velocity.y * deltaTime;
+        bounds.setPosition(x, y);
+        acceleration.set(0, 0);
     }
 
     @Override
     public void render(ShapeRenderer shape) {
-        shape.rect(getX(), getY(), getW(), getH());
+        shape.rect(x, y, width, height);
     }
+
+    @Override
+    public boolean isSolid() { return true; }
+
+    @Override
+    public void onCollision(ICollidable other) {
+        onCollisionEnter(other);
+    }
+
+    public void onCollisionEnter(ICollidable other) {}
 }

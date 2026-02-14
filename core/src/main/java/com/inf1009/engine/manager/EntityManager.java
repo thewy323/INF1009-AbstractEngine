@@ -1,52 +1,49 @@
 package com.inf1009.engine.manager;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.inf1009.engine.entity.AbstractGameEntity;
 
+import com.inf1009.engine.entity.AbstractGameEntity;
+import com.inf1009.engine.interfaces.IEntityProvider;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class EntityManager {
+public class EntityManager implements IEntityProvider {
 
-    private final List<AbstractGameEntity> entities = new ArrayList<>();
-    private final List<AbstractGameEntity> entitiesToRemove = new ArrayList<>();
+    private List<AbstractGameEntity> entities = new ArrayList<>();
+    private List<AbstractGameEntity> entitiesToAdd = new ArrayList<>();
+    private List<AbstractGameEntity> entitiesToRemove = new ArrayList<>();
 
-    public void addEntity(AbstractGameEntity e) {
-        if (e == null) return;
-        entities.add(e);
-    }
-
-    public void removeEntity(AbstractGameEntity e) {
-        entitiesToRemove.add(e);
-    }
-
-    public void clear() {
-        entities.clear();
-        entitiesToRemove.clear();
-    }
-
-    public List<AbstractGameEntity> getEntities() {
-        return Collections.unmodifiableList(entities);
-    }
-
-    public void update(float dt) {
-
-        for (AbstractGameEntity e : entities) {
-            e.update(dt);
+    public void update(float deltaTime) {
+        if (!entitiesToAdd.isEmpty()) {
+            entities.addAll(entitiesToAdd);
+            entitiesToAdd.clear();
         }
-
         if (!entitiesToRemove.isEmpty()) {
             entities.removeAll(entitiesToRemove);
             entitiesToRemove.clear();
         }
 
+        for (AbstractGameEntity e : entities) e.update(deltaTime);
+        removeDeadEntities();
+    }
+
+    public void addEntity(AbstractGameEntity entity) {
+        if (entity != null) entitiesToAdd.add(entity);
+    }
+
+    public void removeEntity(AbstractGameEntity entity) {
+        if (entity != null) entitiesToRemove.add(entity);
+    }
+
+    public List<AbstractGameEntity> getEntities() {
+        return entities;
+    }
+
+    public void removeDeadEntities() {
         entities.removeIf(AbstractGameEntity::isDestroyed);
     }
 
-    public void render(ShapeRenderer shape) {
-        for (AbstractGameEntity e : entities) {
-            e.render(shape);
-        }
+    public void clear() {
+        entities.clear();
+        entitiesToAdd.clear();
+        entitiesToRemove.clear();
     }
-
 }

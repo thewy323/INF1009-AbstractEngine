@@ -5,33 +5,26 @@ import com.inf1009.engine.interfaces.ICollidable;
 
 public class StaticEntity extends AbstractGameEntity implements ICollidable {
 
-    private boolean solid = true;
+    private boolean isSolid;
 
-    public StaticEntity(float x, float y, float w, float h) {
-        super(x, y, w, h);
+    public StaticEntity(float x, float y, float width, float height, boolean isSolid) {
+        super(x, y, width, height);
+        this.isSolid = isSolid;
     }
 
     @Override
-    public void update(float dt) {
-        // Static entity does nothing per frame
-    }
-
-    @Override
-    public boolean isSolid() {
-        return solid;
-    }
-
-    public void setSolid(boolean solid) {
-        this.solid = solid;
-    }
-
-    @Override
-    public void onCollision(ICollidable other) {
-        // Default: no reaction
-    }
+    public void update(float deltaTime) {}
 
     @Override
     public void render(ShapeRenderer shape) {
-        shape.rect(getX(), getY(), getW(), getH());
+        shape.rect(x, y, width, height);
     }
+
+    @Override
+    public boolean isSolid() { return isSolid; }
+
+    public void setSolid(boolean solid) { this.isSolid = solid; }
+
+    @Override
+    public void onCollision(ICollidable other) {}
 }

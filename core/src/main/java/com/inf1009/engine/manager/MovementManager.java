@@ -1,53 +1,39 @@
 package com.inf1009.engine.manager;
 
+import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.input.InputState;
-import com.inf1009.engine.interfaces.IMoveable;
+import com.inf1009.engine.interfaces.IMovable;
 
 public class MovementManager {
 
-    // Main update method
-    public void update(IMoveable entity, InputState input, float dt) {
-        if (entity == null || input == null) return;
-
-        updateVelocity(entity, input);
+    public void updateEntity(IMovable entity, InputState inputState, float dt) {
+        if (entity == null || inputState == null) return;
+        setDirection(entity, inputState.moveX, inputState.moveY);
+        if (inputState.jump) entity.applyAcceleration(new Vector2(0, 250f));
+        applyAcceleration(entity, dt);
         applyVelocity(entity, dt);
     }
 
-    // Converts input into velocity
-    public void updateVelocity(IMoveable entity, InputState input) {
-
-        float vx = input.getMoveX() * entity.getSpeed();
-        float vy = input.getMoveY() * entity.getSpeed();
-
-        entity.setVelocityX(vx);
-        entity.setVelocityY(vy);
-    }
-
-    // Applies velocity to position
-    public void applyVelocity(IMoveable entity, float dt) {
-
-        float dx = entity.getVelocityX() * dt;
-        float dy = entity.getVelocityY() * dt;
-
-        entity.move(dx, dy);
-    }
-
-    // Direct input wrapper
-    public void applyInput(IMoveable entity, InputState input, float dt) {
-        update(entity, input, dt);
-    }
-
-    // Set direction explicitly
-    public void setDirection(IMoveable entity, float dx, float dy) {
+    public void applyVelocity(IMovable entity, float dt) {
         if (entity == null) return;
-        entity.setVelocityX(dx * entity.getSpeed());
-        entity.setVelocityY(dy * entity.getSpeed());
+        entity.applyVelocity(dt);
     }
 
-    // Stop movement
-    public void stop(IMoveable entity) {
+    public void applyAcceleration(IMovable entity, float dt) {
         if (entity == null) return;
-        entity.setVelocityX(0f);
-        entity.setVelocityY(0f);
+        Vector2 a = entity.getAcceleration();
+        if (a == null) return;
+        entity.setVelocity(entity.getVelocity().add(a.x * dt, a.y * dt));
+    }
+
+    public void setDirection(IMovable entity, float dx, float dy) {
+        if (entity == null) return;
+        entity.setDirection(dx, dy);
+    }
+
+    public void stopEntity(IMovable entity) {
+        if (entity == null) return;
+        entity.setVelocity(new Vector2(0, 0));
+        entity.setSpeed(0f);
     }
 }

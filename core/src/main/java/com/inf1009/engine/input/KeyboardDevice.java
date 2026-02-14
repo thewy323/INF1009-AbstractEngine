@@ -2,8 +2,15 @@ package com.inf1009.engine.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import java.util.EnumMap;
+import java.util.Map;
 
-public class Keyboard extends AbstractInputDevice {
+public class KeyboardDevice extends AbstractInputDevice {
+
+    public enum Key { LEFT, RIGHT, UP, DOWN, JUMP }
+    public enum ButtonState { UP, DOWN }
+
+    private Map<Key, ButtonState> keyStates = new EnumMap<>(Key.class);
 
     private final int leftKey;
     private final int rightKey;
@@ -11,48 +18,56 @@ public class Keyboard extends AbstractInputDevice {
     private final int downKey;
     private final int jumpKey;
 
-    public Keyboard(int leftKey, int rightKey, int upKey, int downKey, int jumpKey) {
+    public KeyboardDevice(int leftKey, int rightKey, int upKey, int downKey, int jumpKey) {
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.upKey = upKey;
         this.downKey = downKey;
         this.jumpKey = jumpKey;
+
+        for (Key k : Key.values()) keyStates.put(k, ButtonState.UP);
+        defineBindings();
+        defineActions();
+    }
+
+    public static KeyboardDevice wasd() {
+        return new KeyboardDevice(Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.S, Input.Keys.SPACE);
+    }
+
+    public static KeyboardDevice arrows() {
+        return new KeyboardDevice(Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP, Input.Keys.DOWN, Input.Keys.ENTER);
     }
 
     @Override
-    public InputState readInput() {
-
-        float moveX = 0f;
-        float moveY = 0f;
-
-        if (Gdx.input.isKeyPressed(leftKey)) moveX -= 1f;
-        if (Gdx.input.isKeyPressed(rightKey)) moveX += 1f;
-
-        if (Gdx.input.isKeyPressed(upKey)) moveY += 1f;
-        if (Gdx.input.isKeyPressed(downKey)) moveY -= 1f;
-
-        boolean jump = Gdx.input.isKeyJustPressed(jumpKey);
-
-        return new InputState(moveX, moveY, jump);
+    public void defineBindings() {
+        setBinding("left", leftKey);
+        setBinding("right", rightKey);
+        setBinding("up", upKey);
+        setBinding("down", downKey);
+        setBinding("jump", jumpKey);
     }
 
-    public static Keyboard wasd() {
-        return new Keyboard(
-                Input.Keys.A,
-                Input.Keys.D,
-                Input.Keys.W,
-                Input.Keys.S,
-                Input.Keys.SPACE
-        );
+    @Override
+    public void defineActions() {}
+
+    @Override
+    public void readInput() {
+        deviceInput.reset();
+
+        if (Gdx.input.isKeyPressed(leftKey)) deviceInput.moveX -= 1f;
+        if (Gdx.input.isKeyPressed(rightKey)) deviceInput.moveX += 1f;
+        if (Gdx.input.isKeyPressed(downKey)) deviceInput.moveY -= 1f;
+        if (Gdx.input.isKeyPressed(upKey)) deviceInput.moveY += 1f;
+
+        deviceInput.jump = Gdx.input.isKeyJustPressed(jumpKey);
+
+        keyStates.put(Key.LEFT, Gdx.input.isKeyPressed(leftKey) ? ButtonState.DOWN : ButtonState.UP);
+        keyStates.put(Key.RIGHT, Gdx.input.isKeyPressed(rightKey) ? ButtonState.DOWN : ButtonState.UP);
+        keyStates.put(Key.UP, Gdx.input.isKeyPressed(upKey) ? ButtonState.DOWN : ButtonState.UP);
+        keyStates.put(Key.DOWN, Gdx.input.isKeyPressed(downKey) ? ButtonState.DOWN : ButtonState.UP);
+        keyStates.put(Key.JUMP, Gdx.input.isKeyPressed(jumpKey) ? ButtonState.DOWN : ButtonState.UP);
     }
 
-    public static Keyboard arrows() {
-        return new Keyboard(
-                Input.Keys.LEFT,
-                Input.Keys.RIGHT,
-                Input.Keys.UP,
-                Input.Keys.DOWN,
-                Input.Keys.ENTER
-        );
-    }
+    @Override
+    public void readAction() {}
 }

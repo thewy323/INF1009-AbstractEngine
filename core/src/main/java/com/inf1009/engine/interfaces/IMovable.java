@@ -1,14 +1,16 @@
 package com.inf1009.engine.interfaces;
 
-public interface IMoveable {
+import com.badlogic.gdx.math.Vector2;
 
-    void move(float dx, float dy);
+public interface IMovable {
+    Vector2 getVelocity();
+    void setVelocity(Vector2 v);
 
-    float getVelocityX();
-    float getVelocityY();
+    Vector2 getAcceleration();
+    void applyAcceleration(Vector2 a);
 
-    void setVelocityX(float vx);
-    void setVelocityY(float vy);
+    void setDirection(float dx, float dy);
+    void setSpeed(float speed);
 
-    float getSpeed();
+    void applyVelocity(float dt);
 }

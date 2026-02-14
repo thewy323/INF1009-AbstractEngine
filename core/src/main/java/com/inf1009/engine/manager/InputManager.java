@@ -2,61 +2,44 @@ package com.inf1009.engine.manager;
 
 import com.inf1009.engine.input.AbstractInputDevice;
 import com.inf1009.engine.input.InputState;
-import com.inf1009.engine.input.Keyboard;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+public class InputManager {
 
-public class IOManager {
+    private List<AbstractInputDevice> inputDevices = new ArrayList<>();
+    private InputState playerInput = new InputState();
 
-    private final List<AbstractInputDevice> devices = new ArrayList<>();
-    private final Map<String, Integer> bindings = new HashMap<>();
+    public InputManager() {}
 
-    private InputState playerInput = InputState.neutral();
-
-    public IOManager() {
-        devices.add(Keyboard.wasd());
-        devices.add(Keyboard.arrows());
+    public InputManager(List<AbstractInputDevice> inputDevices) {
+        if (inputDevices != null) this.inputDevices.addAll(inputDevices);
     }
 
-    public List<AbstractInputDevice> getDevices() {
-        return Collections.unmodifiableList(devices);
+    public void registerDevice(AbstractInputDevice device) {
+        if (device != null) inputDevices.add(device);
     }
 
-    public void addDevice(AbstractInputDevice device) {
-        if (device == null) return;
-        devices.add(device);
-    }
-
-    public InputState readDevice(int index) {
-        if (index < 0 || index >= devices.size()) {
-            return InputState.neutral();
-        }
-        return devices.get(index).readInput();
-    }
-
-    public void update() {
-        if (!devices.isEmpty()) {
-            playerInput = devices.get(0).readInput();
-        }
-    }
-
-    public void processInput(int index) {
-        playerInput = readDevice(index);
-    }
-
-    public InputState getInputState(int index) {
-        return readDevice(index);
-    }
-
-    public InputState getPlayerInput() {
+    public InputState getInputState() {
         return playerInput;
     }
 
-    public void setBinding(String action, int keyCode) {
-        bindings.put(action, keyCode);
+    public void update() {
+        processInput();
     }
 
-    public Integer getBinding(String action) {
-        return bindings.get(action);
+    public void processInput() {
+        playerInput.reset();
+        for (AbstractInputDevice d : inputDevices) {
+            d.readInput();
+            InputState s = d.getInputState();
+            playerInput.moveX += s.moveX;
+            playerInput.moveY += s.moveY;
+            playerInput.jump = playerInput.jump || s.jump;
+        }
+        if (playerInput.moveX > 1) playerInput.moveX = 1;
+        if (playerInput.moveX < -1) playerInput.moveX = -1;
+        if (playerInput.moveY > 1) playerInput.moveY = 1;
+        if (playerInput.moveY < -1) playerInput.moveY = -1;
     }
 }

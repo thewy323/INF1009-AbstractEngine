@@ -1,38 +1,47 @@
 package com.inf1009.engine.manager;
 
+import com.inf1009.engine.scene.AbstractScene;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.inf1009.engine.scene.AbstractScreen;
-
 public class SceneManager {
 
-    private final Map<String, AbstractScreen> screens = new HashMap<>();
-    private AbstractScreen current;
+    private AbstractScene currentScene;
+    private Map<String, AbstractScene> scenes = new HashMap<>();
 
-    public void addScreen(String name, AbstractScreen screen) {
-        screens.put(name, screen);
+    public void addScreen(String name, AbstractScene scene) {
+        if (name == null || scene == null) return;
+        scenes.put(name, scene);
     }
 
     public void setScreen(String name) {
-
-        AbstractScreen next = screens.get(name);
-        if (next == null) return;
-
-        if (current != null) current.hide();
-
-        current = next;
-        current.show();
+        if (currentScene != null) currentScene.hide();
+        currentScene = scenes.get(name);
+        if (currentScene != null) currentScene.show();
     }
 
-    public void render(float dt) {
-        if (current != null) current.render(dt);
+    public AbstractScene getCurrentScene() {
+        return currentScene;
+    }
+
+    public void transitionTo(String name, Transition effect) {
+        AbstractScene next = scenes.get(name);
+        if (next == null) return;
+        if (effect != null) effect.apply(currentScene, next);
+        setScreen(name);
+    }
+
+    public void update(float deltaTime) {
+        if (currentScene != null) currentScene.render(deltaTime);
     }
 
     public void dispose() {
-        for (AbstractScreen s : screens.values()) {
-            s.dispose();
-        }
-        screens.clear();
+        for (AbstractScene s : scenes.values()) s.dispose();
+        scenes.clear();
+        currentScene = null;
+    }
+
+    public interface Transition {
+        void apply(AbstractScene from, AbstractScene to);
     }
 }
