@@ -1,6 +1,6 @@
 package com.inf1009.engine.scene;
 
-public abstract class AbstractScene {
+public abstract class Scene {
 
     protected boolean isLoaded = false;
 

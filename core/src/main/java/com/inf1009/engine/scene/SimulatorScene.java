@@ -4,15 +4,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.inf1009.engine.GameMaster;
-import com.inf1009.engine.entity.AbstractGameEntity;
+import com.inf1009.engine.entity.DynamicEntity;
+import com.inf1009.engine.entity.GameEntity;
+import com.inf1009.engine.entity.StaticEntity;
+import com.inf1009.engine.input.KeyboardDevice;
 import com.inf1009.engine.interfaces.ICollidable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimulatorScene extends AbstractScene {
+public class SimulatorScene extends Scene {
 
     private boolean simulationRunning = true;
-    private float simulationTime = 0f;
+   // private float simulationTime = 0f;
     private boolean showCollisionBounds = false;
 
     private final GameMaster game;
@@ -28,7 +31,34 @@ public class SimulatorScene extends AbstractScene {
     public void show() {
         shape = new ShapeRenderer();
         isLoaded = true;
+
+        // Setup keyboard devices
+        game.getInputManager().registerDevice(KeyboardDevice.wasd());
+        game.getInputManager().registerDevice(KeyboardDevice.arrows());
+
+        // Spawn two agents
+        DynamicEntity agent1 = new DynamicEntity(100, 200, 40, 40);
+        agent1.setSpeed(200f);
+
+        DynamicEntity agent2 = new DynamicEntity(500, 200, 40, 40);
+        agent2.setSpeed(200f);
+
+        // Floor
+        StaticEntity floor = new StaticEntity(0, 0, 800, 20);
+        floor.setSolid(true);
+
+        // Walls
+        StaticEntity leftWall = new StaticEntity(0, 0, 20, 600);
+        StaticEntity rightWall = new StaticEntity(780, 0, 20, 600);
+
+        // Register entities
+        game.getEntityManager().addEntity(agent1);
+        game.getEntityManager().addEntity(agent2);
+        game.getEntityManager().addEntity(floor);
+        game.getEntityManager().addEntity(leftWall);
+        game.getEntityManager().addEntity(rightWall);
     }
+
 
     @Override
     public void render(float deltaTime) {
@@ -36,15 +66,15 @@ public class SimulatorScene extends AbstractScene {
         update(deltaTime);
 
         shape.begin(ShapeRenderer.ShapeType.Line);
-        List<AbstractGameEntity> entities = game.getEntityManager().getEntities();
-        for (AbstractGameEntity e : entities) e.render(shape);
+        List<GameEntity> entities = game.getEntityManager().getEntities();
+        for (GameEntity e : entities) e.render(shape);
         shape.end();
     }
 
     public void update(float deltaTime) {
         if (!simulationRunning) return;
 
-        simulationTime += deltaTime;
+       // simulationTime += deltaTime;
         game.getInputManager().update();
         game.getEntityManager().update(deltaTime);
 
@@ -71,7 +101,7 @@ public class SimulatorScene extends AbstractScene {
         gravityEnabled = !gravityEnabled;
     }
 
-    public void spawnEntity(AbstractGameEntity entity) {
+    public void spawnEntity(GameEntity entity) {
         game.getEntityManager().addEntity(entity);
     }
 
@@ -85,7 +115,7 @@ public class SimulatorScene extends AbstractScene {
 
     private List<ICollidable> collectCollidables() {
         List<ICollidable> list = new ArrayList<>();
-        for (AbstractGameEntity e : game.getEntityManager().getEntities()) {
+        for (GameEntity e : game.getEntityManager().getEntities()) {
             if (e instanceof ICollidable) list.add((ICollidable) e);
         }
         return list;

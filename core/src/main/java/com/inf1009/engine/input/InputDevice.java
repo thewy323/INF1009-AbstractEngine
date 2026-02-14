@@ -3,7 +3,7 @@ package com.inf1009.engine.input;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractInputDevice {
+public abstract class InputDevice {
 
     protected InputMap bindings = new InputMap();
     protected Map<String, Runnable> inputActions = new HashMap<>();

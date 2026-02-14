@@ -1,45 +1,71 @@
 package com.inf1009.engine.manager;
 
-import com.inf1009.engine.input.AbstractInputDevice;
+import com.inf1009.engine.input.InputDevice;
 import com.inf1009.engine.input.InputState;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InputManager {
 
-    private List<AbstractInputDevice> inputDevices = new ArrayList<>();
+    // Fields
+    private List<InputDevice> inputDevices = new ArrayList<>();
     private InputState playerInput = new InputState();
 
+    // Constructors
     public InputManager() {}
 
-    public InputManager(List<AbstractInputDevice> inputDevices) {
+    public InputManager(List<InputDevice> inputDevices) {
         if (inputDevices != null) this.inputDevices.addAll(inputDevices);
     }
 
-    public void registerDevice(AbstractInputDevice device) {
+    // Register device
+    public void registerDevice(InputDevice device) {
         if (device != null) inputDevices.add(device);
     }
 
+    // Get input state
     public InputState getInputState() {
         return playerInput;
     }
 
+    // Update
     public void update() {
         processInput();
     }
 
+    // Merge device inputs
     public void processInput() {
+
         playerInput.reset();
-        for (AbstractInputDevice d : inputDevices) {
+
+        for (InputDevice d : inputDevices) {
+
             d.readInput();
             InputState s = d.getInputState();
-            playerInput.moveX += s.moveX;
-            playerInput.moveY += s.moveY;
-            playerInput.jump = playerInput.jump || s.jump;
+
+            playerInput.setMoveX(
+                    playerInput.getMoveX() + s.getMoveX()
+            );
+
+            playerInput.setMoveY(
+                    playerInput.getMoveY() + s.getMoveY()
+            );
+
+            playerInput.setJump(
+                    playerInput.isJump() || s.isJump()
+            );
         }
-        if (playerInput.moveX > 1) playerInput.moveX = 1;
-        if (playerInput.moveX < -1) playerInput.moveX = -1;
-        if (playerInput.moveY > 1) playerInput.moveY = 1;
-        if (playerInput.moveY < -1) playerInput.moveY = -1;
+
+        if (playerInput.getMoveX() > 1)
+            playerInput.setMoveX(1);
+
+        if (playerInput.getMoveX() < -1)
+            playerInput.setMoveX(-1);
+
+        if (playerInput.getMoveY() > 1)
+            playerInput.setMoveY(1);
+
+        if (playerInput.getMoveY() < -1)
+            playerInput.setMoveY(-1);
     }
 }

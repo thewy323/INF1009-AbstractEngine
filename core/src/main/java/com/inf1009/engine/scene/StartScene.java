@@ -1,13 +1,13 @@
 package com.inf1009.engine.scene;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
+//import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
-public class StartScene extends AbstractScene {
+public class StartScene extends Scene {
 
     private Texture titleTexture;
-    private Button startButton;
-    private Button settingsButton;
+    //private Button startButton;
+    //private Button settingsButton;
 
     public StartScene() {}
 

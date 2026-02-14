@@ -7,27 +7,39 @@ import java.util.List;
 
 public class SoundManager implements IVolume {
 
+    // Fields
     private List<Sound> soundList = new ArrayList<>();
     private int masterVol = 100;
     private int musicVol = 100;
     private boolean muted = false;
 
+    // Add sound to manager
     public void AddSound(Sound s) {
         if (s != null) soundList.add(s);
     }
 
+    // Mute all sounds
     public void mute() {
         muted = true;
-        for (Sound s : soundList) s.setVolume(0);
+        for (Sound s : soundList) {
+            s.setVolume(0);
+        }
     }
 
+    // Restore volumes
     public void unmute() {
         muted = false;
-        for (Sound s : soundList) s.setVolume(s.isMusic() ? musicVol : masterVol);
+        for (Sound s : soundList) {
+            int volume = s.isMusic() ? musicVol : masterVol;
+            s.setVolume(volume);
+        }
     }
 
+    // IVolume methods
     @Override
-    public int getMasterVol() { return masterVol; }
+    public int getMasterVol() {
+        return masterVol;
+    }
 
     @Override
     public void setMasterVol(int vol) {
@@ -36,7 +48,9 @@ public class SoundManager implements IVolume {
     }
 
     @Override
-    public int getMusicVol() { return musicVol; }
+    public int getMusicVol() {
+        return musicVol;
+    }
 
     @Override
     public void setMusicVol(int vol) {
@@ -44,6 +58,7 @@ public class SoundManager implements IVolume {
         if (!muted) unmute();
     }
 
+    // Utility
     private int clamp(int v) {
         if (v < 0) return 0;
         if (v > 100) return 100;

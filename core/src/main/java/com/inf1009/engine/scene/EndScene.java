@@ -1,11 +1,11 @@
 package com.inf1009.engine.scene;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
+//import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
-public class EndScene extends AbstractScene {
+public class EndScene extends Scene {
 
-    private Button restartButton;
-    private Button mainMenuButton;
+    //private Button restartButton;
+    //private Button mainMenuButton;
 
     public EndScene() {}
 

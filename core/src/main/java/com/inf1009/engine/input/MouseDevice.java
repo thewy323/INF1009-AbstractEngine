@@ -5,26 +5,31 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class MouseDevice extends AbstractInputDevice {
+public class MouseDevice extends InputDevice {
 
+    // Key enums
     public enum Key { LEFT, RIGHT, MIDDLE }
     public enum ButtonState { UP, DOWN }
 
+    // Fields
     private Map<Key, ButtonState> keyStates = new EnumMap<>(Key.class);
     private Vector2 position = new Vector2();
 
+    // Constructor
     public MouseDevice() {
         for (Key k : Key.values()) keyStates.put(k, ButtonState.UP);
         defineBindings();
         defineActions();
     }
 
+    // Binding setup
     @Override
     public void defineBindings() {}
 
     @Override
     public void defineActions() {}
 
+    // Input reading
     @Override
     public void readInput() {
         position.set(Gdx.input.getX(), Gdx.input.getY());
@@ -37,6 +42,7 @@ public class MouseDevice extends AbstractInputDevice {
     @Override
     public void readAction() {}
 
+    // Position getter
     public Vector2 getPosition() {
         return position;
     }

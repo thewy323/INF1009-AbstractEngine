@@ -1,44 +1,59 @@
 package com.inf1009.engine.manager;
 
-import com.inf1009.engine.entity.AbstractGameEntity;
+import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityManager implements IEntityProvider {
 
-    private List<AbstractGameEntity> entities = new ArrayList<>();
-    private List<AbstractGameEntity> entitiesToAdd = new ArrayList<>();
-    private List<AbstractGameEntity> entitiesToRemove = new ArrayList<>();
+    private List<GameEntity> entities = new ArrayList<>();
+    private List<GameEntity> entitiesToAdd = new ArrayList<>();
+    private List<GameEntity> entitiesToRemove = new ArrayList<>();
 
     public void update(float deltaTime) {
+
         if (!entitiesToAdd.isEmpty()) {
             entities.addAll(entitiesToAdd);
             entitiesToAdd.clear();
         }
+
         if (!entitiesToRemove.isEmpty()) {
             entities.removeAll(entitiesToRemove);
             entitiesToRemove.clear();
         }
 
-        for (AbstractGameEntity e : entities) e.update(deltaTime);
+        for (GameEntity e : entities) {
+            e.update(deltaTime);
+        }
+
         removeDeadEntities();
     }
 
-    public void addEntity(AbstractGameEntity entity) {
-        if (entity != null) entitiesToAdd.add(entity);
+    public void addEntity(GameEntity e) {
+        if (e != null) entitiesToAdd.add(e);
     }
 
-    public void removeEntity(AbstractGameEntity entity) {
+    public void removeEntities(GameEntity entity) {
         if (entity != null) entitiesToRemove.add(entity);
     }
 
-    public List<AbstractGameEntity> getEntities() {
+    public List<GameEntity> getEntities() {
         return entities;
     }
 
-    public void removeDeadEntities() {
-        entities.removeIf(AbstractGameEntity::isDestroyed);
+    public List<GameEntity> getEntitiesAt(float x, float y) {
+        List<GameEntity> result = new ArrayList<>();
+        for (GameEntity e : entities) {
+            if (e.getBounds().contains(x, y)) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
+
+    private void removeDeadEntities() {
+        entities.removeIf(GameEntity::isDestroyed);
     }
 
     public void clear() {
