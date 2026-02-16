@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.entity.DynamicEntity;
 import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.entity.StaticEntity;
+import com.inf1009.engine.input.InputState;
 import com.inf1009.engine.interfaces.IEntityProvider;
 import com.inf1009.engine.interfaces.IMovementInterface;
 import com.inf1009.engine.interfaces.ISceneNavigator;
@@ -109,14 +110,14 @@ public class SimulatorScene extends Scene {
         simulationTime += dt;
         inputManager.update();
 
-        float moveX = inputManager.getInputState().getMoveX();
-        boolean jump = inputManager.getInputState().isJump();
-
-        movementManager.applyInput(controllableEntity, moveX, 0f, 300f);
+        InputState state = inputManager.getInputState();
+        float moveX = state.getMoveX();
+        boolean jump = state.isJump();
+        movementManager.applyInput(controllableEntity, moveX, 0f, 600f);
 
         if (jump && Math.abs(controllableEntity.getVelocity().y) < 0.1f) {
             Vector2 v = controllableEntity.getVelocity();
-            v.y = 500f;
+            v.y = 600f;
             controllableEntity.setVelocity(v);
         }
 

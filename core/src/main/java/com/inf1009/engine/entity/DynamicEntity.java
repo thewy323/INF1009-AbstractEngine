@@ -63,7 +63,6 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     @Override
     public void update(float dt) {
         velocity.x = direction.x * speed;
-        applyVelocity(dt);
     }
 
     @Override
