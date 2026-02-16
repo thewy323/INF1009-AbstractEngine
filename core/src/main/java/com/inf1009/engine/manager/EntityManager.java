@@ -2,6 +2,7 @@ package com.inf1009.engine.manager;
 
 import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
+import java.util.Collections;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,8 @@ public class EntityManager implements IEntityProvider {
     }
 
     public List<GameEntity> getEntities() {
-        return entities;
+        return Collections.unmodifiableList(entities);
+
     }
 
     // Returns entities at given coordinates

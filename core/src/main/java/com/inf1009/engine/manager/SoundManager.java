@@ -179,12 +179,13 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
     @Override
     public void onCollision(GameEntity e1, GameEntity e2) {
 
-        if ((e1.getClass() == DynamicEntity.class &&
-            e2.getClass() == DynamicEntity.class)) {
+        if (e1 instanceof DynamicEntity &&
+            e2 instanceof DynamicEntity) {
 
             playSound("audio/hit.wav");
         }
     }
+
 
     // Applies stored volume values
     private void applyVolumes() {
