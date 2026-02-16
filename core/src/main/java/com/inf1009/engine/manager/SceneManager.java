@@ -1,11 +1,12 @@
 package com.inf1009.engine.manager;
 
+import com.inf1009.engine.interfaces.ISceneNavigator;
 import com.inf1009.engine.scene.Scene;
 import java.util.HashMap;
 import java.util.Map;
 
 // Controls scene registration and transitions
-public class SceneManager {
+public class SceneManager implements ISceneNavigator{
 
     private Scene currentScene;
     private Map<String, Scene> scenes = new HashMap<>();
@@ -39,5 +40,12 @@ public class SceneManager {
         scenes.clear();
         currentScene = null;
     }
+
+    //scene nav
+    @Override
+    public void navigateTo(String sceneName) {
+        setScene(sceneName);
+    }
+
 }
 

@@ -5,30 +5,30 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.inf1009.engine.manager.SceneManager;
-import com.inf1009.engine.manager.InputManager;
+import com.inf1009.engine.interfaces.IInputManager;
+import com.inf1009.engine.interfaces.ISceneNavigator;
 import com.inf1009.engine.interfaces.ISoundManager;
 
 // Scene for runtime configuration such as audio control
 public class SettingsScene extends Scene {
 
     // Engine systems used by settings
-    private final SceneManager sceneManager;
-    private final InputManager inputManager;
-    private final SpriteBatch batch;
+    private final ISceneNavigator sceneNavigator;
+    private final IInputManager inputManager;
     private final ISoundManager soundManager;
+    private final SpriteBatch batch;
 
     // Font for UI rendering
     private BitmapFont font;
 
     // Injects required systems
     public SettingsScene(
-            SceneManager sceneManager,
-            InputManager inputManager,
+            ISceneNavigator sceneNavigator,
+            IInputManager inputManager,
             ISoundManager soundManager,
             SpriteBatch batch
     ) {
-        this.sceneManager = sceneManager;
+        this.sceneNavigator = sceneNavigator;
         this.inputManager = inputManager;
         this.soundManager = soundManager;
         this.batch = batch;
@@ -56,7 +56,7 @@ public class SettingsScene extends Scene {
     }
 
     // Handles settings input actions
-    public void update(float dt) {
+    private void update(float dt) {
 
         inputManager.update();
 
@@ -69,7 +69,7 @@ public class SettingsScene extends Scene {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            sceneManager.setScene("start");
+            sceneNavigator.navigateTo("start");   // Navigate via abstraction
         }
     }
 

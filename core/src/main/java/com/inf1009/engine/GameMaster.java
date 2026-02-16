@@ -49,11 +49,10 @@ public class GameMaster extends ApplicationAdapter {
         io.registerDevice(KeyboardDevice.wasd());
 
         // Register scenes
-        sm.addScene("start", new StartScene(this));
+        sm.addScene("start", new StartScene(sm, batch));
         sm.addScene("settings", new SettingsScene(sm, io, snd, batch));
         sm.addScene("sim", new SimulatorScene(em, mm, io, snd, batch, sm));
-        sm.addScene("end", new EndScene(this));
-
+        sm.addScene("end", new EndScene(sm, batch));
         sm.setScene("start");
     }
 

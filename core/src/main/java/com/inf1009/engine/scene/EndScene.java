@@ -5,26 +5,30 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.inf1009.engine.GameMaster;
+import com.inf1009.engine.interfaces.ISceneNavigator;
 
 // Scene displayed after simulation ends
 public class EndScene extends Scene {
 
-    // Reference to core game controller
-    private final GameMaster game;
+    // Navigation abstraction
+    private final ISceneNavigator sceneNavigator;
+    private final SpriteBatch batch;
 
     // Rendering utilities
     private ShapeRenderer shape;
     private BitmapFont font;
-    private SpriteBatch batch;
 
     // Button bounds
     private float restartX = 220, restartY = 240, restartW = 200, restartH = 60;
     private float menuX    = 220, menuY    = 160, menuW    = 200, menuH    = 60;
 
-    // Injects main game reference
-    public EndScene(GameMaster game) {
-        this.game = game;
+    // Injects navigation system
+    public EndScene(
+            ISceneNavigator sceneNavigator,
+            SpriteBatch batch
+    ) {
+        this.sceneNavigator = sceneNavigator;
+        this.batch = batch;
     }
 
     @Override
@@ -32,7 +36,6 @@ public class EndScene extends Scene {
 
         if (shape == null) shape = new ShapeRenderer();
         if (font == null) font = new BitmapFont();
-        if (batch == null) batch = game.getBatch();
 
         isLoaded = true;
     }
@@ -59,10 +62,10 @@ public class EndScene extends Scene {
 
         // Handle clicks
         if (isClicked(restartX, restartY, restartW, restartH)) {
-            game.getSceneManager().setScene("sim");
+            sceneNavigator.navigateTo("sim");     // Restart simulation
         }
         else if (isClicked(menuX, menuY, menuW, menuH)) {
-            game.getSceneManager().setScene("start");
+            sceneNavigator.navigateTo("start");   // Return to menu
         }
     }
 
@@ -88,4 +91,3 @@ public class EndScene extends Scene {
     @Override
     public void resize(int width, int height) {}
 }
-

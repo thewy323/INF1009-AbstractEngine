@@ -12,9 +12,9 @@ import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.entity.StaticEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
 import com.inf1009.engine.interfaces.IMovementManager;
+import com.inf1009.engine.interfaces.ISceneNavigator;
 import com.inf1009.engine.interfaces.IInputManager;
 import com.inf1009.engine.interfaces.ISoundManager;
-import com.inf1009.engine.manager.SceneManager;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class SimulatorScene extends Scene {
     private final IMovementManager movementManager;
     private final IInputManager inputManager;
     private final ISoundManager soundManager;
-    private final SceneManager sceneManager;
+    private final ISceneNavigator sceneNavigator;
     private final SpriteBatch batch;
 
     // Simulation state
@@ -49,14 +49,15 @@ public class SimulatorScene extends Scene {
             IInputManager inputManager,
             ISoundManager soundManager,
             SpriteBatch batch,
-            SceneManager sceneManager
+            ISceneNavigator sceneNavigator
+
     ) {
         this.entityProvider = entityProvider;
         this.movementManager = movementManager;
         this.inputManager = inputManager;
         this.soundManager = soundManager;
         this.batch = batch;
-        this.sceneManager = sceneManager;
+        this.sceneNavigator = sceneNavigator;
     }
 
     @Override
@@ -88,7 +89,7 @@ public class SimulatorScene extends Scene {
     public void render(float dt) {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            sceneManager.setScene("end");    // Scene transition
+            sceneNavigator.navigateTo("end");    // Scene transition
         }
 
         clearScreen();

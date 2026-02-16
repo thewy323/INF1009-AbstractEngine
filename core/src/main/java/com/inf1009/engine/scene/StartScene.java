@@ -5,71 +5,71 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.inf1009.engine.GameMaster;
+import com.inf1009.engine.interfaces.ISceneNavigator;
 
-// Main menu scene providing navigation to simulation and settings
+// Initial menu scene
 public class StartScene extends Scene {
 
-    // Reference to core game controller
-    private final GameMaster game;
+    // Navigation abstraction
+    private final ISceneNavigator sceneNavigator;
+    private final SpriteBatch batch;
 
-    // Rendering utilities
     private ShapeRenderer shape;
     private BitmapFont font;
-    private SpriteBatch batch;
 
-    // Button bounds
+    // Buttons
     private float startX = 220, startY = 280, startW = 200, startH = 60;
     private float settingsX = 220, settingsY = 200, settingsW = 200, settingsH = 60;
     private float exitX  = 220, exitY  = 120, exitW  = 200, exitH  = 60;
 
-    // Injects main game reference
-    public StartScene(GameMaster game) {
-        this.game = game;
+    // Injects navigation system
+    public StartScene(
+            ISceneNavigator sceneNavigator,
+            SpriteBatch batch
+    ) {
+        this.sceneNavigator = sceneNavigator;
+        this.batch = batch;
     }
 
     @Override
     public void show() {
-        shape = new ShapeRenderer();    // Initialize button renderer
-        font = new BitmapFont();        // Initialize font
-        batch = game.getBatch();        // Use shared batch
+        shape = new ShapeRenderer();
+        font = new BitmapFont();
         isLoaded = true;
     }
 
     @Override
     public void render(float dt) {
 
-        // Clear screen
         Gdx.gl.glClearColor(0.08f, 0.08f, 0.08f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Draw button rectangles
+        // Draw buttons
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.rect(startX, startY, startW, startH);
         shape.rect(settingsX, settingsY, settingsW, settingsH);
         shape.rect(exitX, exitY, exitW, exitH);
         shape.end();
 
-        // Draw button labels
+        // Draw text
         batch.begin();
         font.draw(batch, "START", startX + 70, startY + 38);
         font.draw(batch, "SETTINGS", settingsX + 55, settingsY + 38);
         font.draw(batch, "EXIT", exitX + 80, exitY + 38);
         batch.end();
 
-        // Handle button interactions
+        // Button logic
         if (isClicked(startX, startY, startW, startH)) {
-            game.getSceneManager().setScene("sim");
+            sceneNavigator.navigateTo("sim");
         }
         else if (isClicked(settingsX, settingsY, settingsW, settingsH)) {
-            game.getSceneManager().setScene("settings");
+            sceneNavigator.navigateTo("settings");
         }
         else if (isClicked(exitX, exitY, exitW, exitH)) {
             Gdx.app.exit();
         }
     }
 
-    // Detects mouse click inside button bounds
     private boolean isClicked(float x, float y, float w, float h) {
 
         if (!Gdx.input.justTouched()) return false;
