@@ -1,6 +1,6 @@
 package com.inf1009.engine.interfaces;
 
-public interface IMovementManager {
+public interface IMovementInterface {
 
     void update(IMovable entity, float deltaTime);
 

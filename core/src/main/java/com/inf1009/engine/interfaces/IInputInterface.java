@@ -2,7 +2,7 @@ package com.inf1009.engine.interfaces;
 
 import com.inf1009.engine.input.InputState;
 
-public interface IInputManager {
+public interface IInputInterface {
 
     void update();
 

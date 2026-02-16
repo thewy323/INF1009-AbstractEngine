@@ -1,9 +1,7 @@
 package com.inf1009.engine.sound;
 
-import com.inf1009.engine.interfaces.ISound;
-
 // Base abstraction for audio output devices
-public abstract class SoundOutputDevice implements ISound {
+public abstract class SoundOutputDevice {
 
     // Master volume level (0–100)
     protected int volume = 100;
@@ -12,7 +10,9 @@ public abstract class SoundOutputDevice implements ISound {
     protected boolean isMusic = false;
 
     // Returns current volume
-    public int getVolume() { return volume; }
+    public int getVolume() {
+        return volume;
+    }
 
     // Sets clamped volume level
     public void setVolume(int v) {
@@ -22,13 +22,13 @@ public abstract class SoundOutputDevice implements ISound {
     }
 
     // Returns whether current audio is music
-    public boolean isMusic() { return isMusic; }
+    public boolean isMusic() {
+        return isMusic;
+    }
 
     // Plays a sound or music file
-    @Override
     public abstract void playSound(String soundFile, boolean isMusic);
 
     // Stops currently playing sound
-    @Override
     public abstract void stopSound();
 }

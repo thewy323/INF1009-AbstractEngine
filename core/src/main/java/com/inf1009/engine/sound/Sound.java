@@ -18,8 +18,13 @@ public class Sound extends SoundOutputDevice {
         setVolume(volume);
     }
 
-    public String getSoundFile() { return soundFile; }
-    public void setSoundFile(String soundFile) { this.soundFile = soundFile; }
+    public String getSoundFile() {
+        return soundFile;
+    }
+
+    public void setSoundFile(String soundFile) {
+        this.soundFile = soundFile;
+    }
 
     // Updates volume and applies to active music
     @Override

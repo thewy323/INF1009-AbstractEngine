@@ -3,7 +3,7 @@ package com.inf1009.engine.manager;
 import com.badlogic.gdx.Gdx;
 import com.inf1009.engine.input.InputDevice;
 import com.inf1009.engine.input.InputState;
-import com.inf1009.engine.interfaces.IInputManager;
+import com.inf1009.engine.interfaces.IInputInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 // Aggregates input from multiple devices
-public class InputManager implements IInputManager {
+public class InputManager implements IInputInterface {
 
     private List<InputDevice> inputDevices = new ArrayList<>();
     private Map<String, Integer> keyBindings = new HashMap<>();

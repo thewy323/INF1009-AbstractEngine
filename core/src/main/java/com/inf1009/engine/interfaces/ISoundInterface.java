@@ -1,6 +1,6 @@
 package com.inf1009.engine.interfaces;
 
-public interface ISoundManager {
+public interface ISoundInterface {
 
     void playSound(String name);
 

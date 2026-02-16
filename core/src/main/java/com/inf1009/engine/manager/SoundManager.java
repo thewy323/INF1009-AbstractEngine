@@ -3,7 +3,7 @@ package com.inf1009.engine.manager;
 import com.inf1009.engine.entity.DynamicEntity;
 import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.interfaces.ICollidableListener;
-import com.inf1009.engine.interfaces.ISoundManager;
+import com.inf1009.engine.interfaces.ISoundInterface;
 import com.inf1009.engine.interfaces.IVolume;
 import com.inf1009.engine.sound.Sound;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Manages audio playback, volume control, and collision-triggered SFX
-public class SoundManager implements IVolume, ICollidableListener, ISoundManager {
+public class SoundManager implements IVolume, ICollidableListener, ISoundInterface {
 
     // Registered sound assets
     private final List<Sound> soundList = new ArrayList<>();
@@ -41,20 +41,12 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
                 return;
             }
         }
-
-        // Fallback: play first available SFX
-        for (Sound s : soundList) {
-            if (!s.isMusic()) {
-                s.setVolume(masterVol);
-                s.playSound(name, false);
-                return;
-            }
-        }
     }
 
     // Plays looping background music
     @Override
     public void playMusic(String name) {
+
         currentMusicFile = name;
         if (muted) return;
 
@@ -91,6 +83,7 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
     // Resumes music or restarts if disposed
     @Override
     public void resumeMusic() {
+
         if (muted) return;
 
         for (Sound s : soundList) {
@@ -134,14 +127,7 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
         muted = true;
 
         for (Sound s : soundList) {
-            if (!s.isMusic()) s.setVolume(0);
-        }
-
-        for (Sound s : soundList) {
-            if (s.isMusic()) {
-                s.setVolume(0);
-                s.pauseMusic();
-            }
+            s.setVolume(0);
         }
     }
 
@@ -164,16 +150,24 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
 
     // IVolume compatibility
     @Override
-    public int getMasterVol() { return masterVol; }
+    public int getMasterVol() {
+        return masterVol;
+    }
 
     @Override
-    public void setMasterVol(int vol) { setMasterVolume(vol); }
+    public void setMasterVol(int vol) {
+        setMasterVolume(vol);
+    }
 
     @Override
-    public int getMusicVol() { return musicVol; }
+    public int getMusicVol() {
+        return musicVol;
+    }
 
     @Override
-    public void setMusicVol(int vol) { setMusicVolume(vol); }
+    public void setMusicVol(int vol) {
+        setMusicVolume(vol);
+    }
 
     // Triggered by collision manager
     @Override
@@ -185,7 +179,6 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundManager
             playSound("audio/hit.wav");
         }
     }
-
 
     // Applies stored volume values
     private void applyVolumes() {

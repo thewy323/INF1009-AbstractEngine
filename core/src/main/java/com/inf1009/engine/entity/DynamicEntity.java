@@ -73,7 +73,7 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     }
 
     @Override
-    public boolean isSolid() {
+    public boolean isStatic() {
         return true;
     }
 
@@ -82,7 +82,7 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     public void onCollision(ICollidable other) {
 
         if (!(other instanceof GameEntity)) return;
-        if (!isSolid() || !other.isSolid()) return;
+        if (!isStatic() || !other.isStatic()) return;
 
         GameEntity g = (GameEntity) other;
 

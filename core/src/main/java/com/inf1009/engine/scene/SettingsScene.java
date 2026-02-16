@@ -5,17 +5,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.inf1009.engine.interfaces.IInputManager;
+import com.inf1009.engine.interfaces.IInputInterface;
 import com.inf1009.engine.interfaces.ISceneNavigator;
-import com.inf1009.engine.interfaces.ISoundManager;
+import com.inf1009.engine.interfaces.ISoundInterface;
 
 // Scene for runtime configuration such as audio control
 public class SettingsScene extends Scene {
 
     // Engine systems used by settings
     private final ISceneNavigator sceneNavigator;
-    private final IInputManager inputManager;
-    private final ISoundManager soundManager;
+    private final IInputInterface inputManager;
+    private final ISoundInterface soundManager;
     private final SpriteBatch batch;
 
     // Font for UI rendering
@@ -24,8 +24,8 @@ public class SettingsScene extends Scene {
     // Injects required systems
     public SettingsScene(
             ISceneNavigator sceneNavigator,
-            IInputManager inputManager,
-            ISoundManager soundManager,
+            IInputInterface inputManager,
+            ISoundInterface soundManager,
             SpriteBatch batch
     ) {
         this.sceneNavigator = sceneNavigator;

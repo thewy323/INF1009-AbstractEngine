@@ -2,10 +2,10 @@ package com.inf1009.engine.manager;
 
 import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.interfaces.IMovable;
-import com.inf1009.engine.interfaces.IMovementManager;
+import com.inf1009.engine.interfaces.IMovementInterface;
 
 // Handles movement logic for IMovable entities
-public class MovementManager implements IMovementManager {
+public class MovementManager implements IMovementInterface {
 
     @Override
     public void update(IMovable entity, float deltaTime) {

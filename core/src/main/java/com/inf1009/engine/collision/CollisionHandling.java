@@ -7,7 +7,7 @@ public class CollisionHandling {
     // Resolves collision between two solid objects
     public void resolve(ICollidable a, ICollidable b) {
 
-        if (!a.isSolid() || !b.isSolid()) return;
+        if (!a.isStatic() || !b.isStatic()) return;
 
         a.onCollision(b);
         b.onCollision(a);

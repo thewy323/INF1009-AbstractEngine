@@ -8,7 +8,7 @@ public interface ICollidable {
     Rectangle getBounds();
 
     // Indicates whether object blocks other objects
-    boolean isSolid();
+    boolean isStatic();
 
     // Callback invoked when collision occurs
     void onCollision(ICollidable other);

@@ -6,32 +6,31 @@ import com.inf1009.engine.interfaces.ICollidable;
 // Non-moving entity that participates in collision
 public class StaticEntity extends GameEntity implements ICollidable {
 
-    private boolean isSolid;
-
     // Initializes static entity
     public StaticEntity(float x, float y, float width, float height) {
         super(x, y, width, height);
-        this.isSolid = true;
     }
 
+    // Static entities do not update
     @Override
-    public void update(float deltaTime) {}
+    public void update(float deltaTime) {
+    }
 
+    // Simple visual rendering
     @Override
     public void render(ShapeRenderer shape) {
         shape.setColor(0.3f, 0.3f, 0.3f, 1f);
         shape.rect(x, y, width, height);
     }
 
+    // Identifies this entity as static
     @Override
-    public boolean isSolid() {
-        return isSolid;
+    public boolean isStatic() {
+        return true;
     }
 
-    public void setSolid(boolean solid) {
-        this.isSolid = solid;
-    }
-
+    // Static entity collision response (no internal logic here)
     @Override
-    public void onCollision(ICollidable other) {}
+    public void onCollision(ICollidable other) {
+    }
 }

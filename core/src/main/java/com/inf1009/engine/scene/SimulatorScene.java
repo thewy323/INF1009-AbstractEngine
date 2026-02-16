@@ -11,10 +11,10 @@ import com.inf1009.engine.entity.DynamicEntity;
 import com.inf1009.engine.entity.GameEntity;
 import com.inf1009.engine.entity.StaticEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
-import com.inf1009.engine.interfaces.IMovementManager;
+import com.inf1009.engine.interfaces.IMovementInterface;
 import com.inf1009.engine.interfaces.ISceneNavigator;
-import com.inf1009.engine.interfaces.IInputManager;
-import com.inf1009.engine.interfaces.ISoundManager;
+import com.inf1009.engine.interfaces.IInputInterface;
+import com.inf1009.engine.interfaces.ISoundInterface;
 
 import java.util.List;
 
@@ -22,11 +22,12 @@ public class SimulatorScene extends Scene {
 
     // Engine dependencies
     private final IEntityProvider entityProvider;
-    private final IMovementManager movementManager;
-    private final IInputManager inputManager;
-    private final ISoundManager soundManager;
+    private final IMovementInterface movementManager;
+    private final IInputInterface inputManager;
+    private final ISoundInterface soundManager;
     private final ISceneNavigator sceneNavigator;
     private final SpriteBatch batch;
+
 
     // Simulation state
     private boolean simulationRunning = true;
@@ -44,21 +45,21 @@ public class SimulatorScene extends Scene {
 
     // Constructor injects engine systems
     public SimulatorScene(
-            IEntityProvider entityProvider,
-            IMovementManager movementManager,
-            IInputManager inputManager,
-            ISoundManager soundManager,
-            SpriteBatch batch,
-            ISceneNavigator sceneNavigator
+        IEntityProvider entityProvider,
+        IMovementInterface movementManager,
+        IInputInterface inputManager,
+        ISoundInterface soundManager,
+        SpriteBatch batch,
+        ISceneNavigator sceneNavigator
+) {
+    this.entityProvider = entityProvider;
+    this.movementManager = movementManager;
+    this.inputManager = inputManager;
+    this.soundManager = soundManager;
+    this.batch = batch;
+    this.sceneNavigator = sceneNavigator;
+}
 
-    ) {
-        this.entityProvider = entityProvider;
-        this.movementManager = movementManager;
-        this.inputManager = inputManager;
-        this.soundManager = soundManager;
-        this.batch = batch;
-        this.sceneNavigator = sceneNavigator;
-    }
 
     @Override
     public void show() {
