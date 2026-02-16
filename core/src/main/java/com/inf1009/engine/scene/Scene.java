@@ -1,3 +1,5 @@
+package com.inf1009.engine.scene;
+
 // Base abstraction for all scenes in the engine
 public abstract class Scene {
 
