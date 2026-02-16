@@ -74,7 +74,7 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
 
     @Override
     public boolean isStatic() {
-        return true;
+        return false;
     }
 
     // Resolves collision overlap
@@ -82,25 +82,46 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     public void onCollision(ICollidable other) {
 
         if (!(other instanceof GameEntity)) return;
-        if (!isStatic() || !other.isStatic()) return;
+        if (other.isStatic() == false) return; // only resolve against static
 
         GameEntity g = (GameEntity) other;
 
         Rectangle a = this.getBounds();
         Rectangle b = g.getBounds();
 
-        if (a.overlaps(b)) {
+        if (!a.overlaps(b)) return;
 
-            float overlapX = Math.min(a.x + a.width - b.x, b.x + b.width - a.x);
-            float overlapY = Math.min(a.y + a.height - b.y, b.y + b.height - a.y);
+        float overlapX = Math.min(a.x + a.width - b.x, b.x + b.width - a.x);
+        float overlapY = Math.min(a.y + a.height - b.y, b.y + b.height - a.y);
 
-            if (overlapX < overlapY) {
-                if (a.x < b.x) setPosition(getX() - overlapX, getY());
-                else setPosition(getX() + overlapX, getY());
-            } else {
-                if (a.y < b.y) setPosition(getX(), getY() - overlapY);
-                else setPosition(getX(), getY() + overlapY);
+        // ONLY resolve vertically if falling down onto platform
+        if (overlapY < overlapX) {
+
+            // Falling down
+            if (velocity.y <= 0 && a.y >= b.y + b.height - 5) {
+
+                setPosition(getX(), b.y + b.height);
+
+                velocity.y = 0;
+            }
+
+            // Hitting head on platform from below
+            else if (velocity.y > 0 && a.y + a.height <= b.y + 5) {
+
+                setPosition(getX(), b.y - getHeight());
+
+                velocity.y = 0;
             }
         }
+
+        else {
+
+            // Horizontal collision
+            if (a.x < b.x)
+                setPosition(getX() - overlapX, getY());
+            else
+                setPosition(getX() + overlapX, getY());
+        }
     }
+
 }
