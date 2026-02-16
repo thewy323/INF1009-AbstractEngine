@@ -10,9 +10,10 @@ import com.inf1009.engine.scene.*;
 import com.inf1009.engine.sound.Sound;
 import com.inf1009.engine.input.KeyboardDevice;
 
+// Core engine bootstrap and system coordinator
 public class GameMaster extends ApplicationAdapter {
 
-    // UML fields
+    // Core systems
     private SpriteBatch batch;
     private EntityManager em;
     private SceneManager sm;
@@ -26,7 +27,7 @@ public class GameMaster extends ApplicationAdapter {
 
         batch = new SpriteBatch();
 
-        // Managers
+        // Initialize managers
         em  = new EntityManager();
         sm  = new SceneManager();
         mm  = new MovementManager();
@@ -34,9 +35,9 @@ public class GameMaster extends ApplicationAdapter {
         snd = new SoundManager();
         cm  = new CollisionManager(em);
 
-        cm.addCollisionListener(snd);
+        cm.addCollisionListener(snd);   // Register sound as collision listener
 
-        // Audio
+        // Load audio assets
         Sound bgm = new Sound("audio/bgm.wav", true, 100);
         Sound hit = new Sound("audio/hit.wav", false, 100);
 
@@ -44,13 +45,13 @@ public class GameMaster extends ApplicationAdapter {
         snd.addSound(hit);
         snd.playMusic("audio/bgm.wav");
 
-        // Input
+        // Register input device
         io.registerDevice(KeyboardDevice.wasd());
 
-        // Scenes
+        // Register scenes
         sm.addScene("start", new StartScene(this));
         sm.addScene("settings", new SettingsScene(sm, io, snd, batch));
-        sm.addScene("sim", new SimulatorScene(em, mm, io, batch, sm));
+        sm.addScene("sim", new SimulatorScene(em, mm, io, snd, batch, sm));
         sm.addScene("end", new EndScene(this));
 
         sm.setScene("start");
@@ -64,9 +65,9 @@ public class GameMaster extends ApplicationAdapter {
 
         float dt = Gdx.graphics.getDeltaTime();
 
-        em.update(dt);
-        cm.update();
-        sm.update(dt);
+        em.update(dt);    // Update entities
+        cm.update();      // Check collisions
+        sm.update(dt);    // Update active scene
     }
 
     @Override
@@ -78,7 +79,7 @@ public class GameMaster extends ApplicationAdapter {
             batch.dispose();
     }
 
-    // UML getters
+    // Accessors for engine systems
     public EntityManager getEntityManager() { return em; }
     public SceneManager getSceneManager() { return sm; }
     public MovementManager getMovementManager() { return mm; }

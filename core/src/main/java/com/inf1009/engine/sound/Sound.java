@@ -2,6 +2,7 @@ package com.inf1009.engine.sound;
 
 import com.badlogic.gdx.Gdx;
 
+// Concrete implementation of audio playback using LibGDX
 public class Sound extends SoundOutputDevice {
 
     private String soundFile;
@@ -10,6 +11,7 @@ public class Sound extends SoundOutputDevice {
 
     public Sound() {}
 
+    // Initializes sound with file and volume settings
     public Sound(String soundFile, boolean isMusic, int volume) {
         this.soundFile = soundFile;
         this.isMusic = isMusic;
@@ -19,7 +21,7 @@ public class Sound extends SoundOutputDevice {
     public String getSoundFile() { return soundFile; }
     public void setSoundFile(String soundFile) { this.soundFile = soundFile; }
 
-    // IMPORTANT: apply volume to currently playing music too
+    // Updates volume and applies to active music
     @Override
     public void setVolume(int volume) {
         super.setVolume(volume);
@@ -28,6 +30,7 @@ public class Sound extends SoundOutputDevice {
         }
     }
 
+    // Plays sound effect or looping music
     @Override
     public void playSound(String soundFile, boolean isMusic) {
 
@@ -37,40 +40,48 @@ public class Sound extends SoundOutputDevice {
         if (soundFile == null) return;
 
         if (isMusic) {
-            // If already have music loaded, don't recreate every time unless file changed
+
             if (music == null) {
                 music = Gdx.audio.newMusic(Gdx.files.internal(soundFile));
                 music.setLooping(true);
             }
+
             music.setVolume(volume / 100f);
             music.play();
+
         } else {
-            // SFX can be recreated each time (simple)
+
             if (sfx != null) {
                 sfx.stop();
                 sfx.dispose();
                 sfx = null;
             }
+
             sfx = Gdx.audio.newSound(Gdx.files.internal(soundFile));
             sfx.play(volume / 100f);
         }
     }
 
+    // Pauses active music
     public void pauseMusic() {
         if (music != null) music.pause();
     }
 
+    // Resumes paused music
     public void resumeMusic() {
         if (music != null) music.play();
     }
 
+    // Stops and disposes audio resources
     @Override
     public void stopSound() {
+
         if (music != null) {
             music.stop();
             music.dispose();
             music = null;
         }
+
         if (sfx != null) {
             sfx.stop();
             sfx.dispose();

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.interfaces.ICollidable;
 import com.inf1009.engine.interfaces.IMovable;
 
+// Movable entity supporting velocity, direction, and collision
 public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
 
     private Vector2 velocity = new Vector2();
@@ -33,12 +34,11 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
         acceleration.set(x, y);
     }
 
+    // Applies velocity to position
     @Override
     public void applyVelocity(float dt) {
-        // DO NOT modify velocity here anymore
         x += velocity.x * dt;
         y += velocity.y * dt;
-
         bounds.setPosition(x, y);
     }
 
@@ -59,13 +59,10 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
         this.speed = speed;
     }
 
+    // Updates movement each frame
     @Override
     public void update(float dt) {
-
-        // Horizontal movement via direction + speed
         velocity.x = direction.x * speed;
-
-        // Vertical velocity already updated by MovementManager
         applyVelocity(dt);
     }
 
@@ -75,20 +72,19 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
         shape.rect(x, y, width, height);
     }
 
-
     @Override
     public boolean isSolid() {
         return true;
     }
 
+    // Resolves collision overlap
     @Override
     public void onCollision(ICollidable other) {
 
         if (!(other instanceof GameEntity)) return;
+        if (!isSolid() || !other.isSolid()) return;
 
         GameEntity g = (GameEntity) other;
-
-        if (!isSolid() || !other.isSolid()) return;
 
         Rectangle a = this.getBounds();
         Rectangle b = g.getBounds();
@@ -107,5 +103,4 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
             }
         }
     }
-
 }

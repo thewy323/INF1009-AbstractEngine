@@ -10,20 +10,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// Aggregates input from multiple devices
 public class InputManager implements IInputManager {
 
     private List<InputDevice> inputDevices = new ArrayList<>();
-
-    // simple key binding storage
     private Map<String, Integer> keyBindings = new HashMap<>();
 
-    // Register device
+    // Registers input device
     public void registerDevice(InputDevice device) {
         if (device != null) inputDevices.add(device);
     }
 
-    // IInputManager
-
+    // Polls all devices
     @Override
     public void update() {
         for (InputDevice d : inputDevices) {
@@ -31,13 +29,14 @@ public class InputManager implements IInputManager {
         }
     }
 
+    // Merges device input states
     @Override
     public InputState getInputState() {
+
         InputState merged = new InputState();
 
         for (InputDevice d : inputDevices) {
             InputState s = d.getInputState();
-
             merged.setMoveX(merged.getMoveX() + s.getMoveX());
             merged.setMoveY(merged.getMoveY() + s.getMoveY());
             merged.setJump(merged.isJump() || s.isJump());
@@ -46,16 +45,19 @@ public class InputManager implements IInputManager {
         return merged;
     }
 
+    // Binds action to key
     @Override
     public void rebindKey(String action, int keyCode) {
         keyBindings.put(action, keyCode);
     }
 
+    // Retrieves bound key
     @Override
     public int getKeyBinding(String action) {
         return keyBindings.getOrDefault(action, -1);
     }
 
+    // Checks if action key was pressed
     @Override
     public boolean isActionJustPressed(String action) {
         Integer keyCode = keyBindings.get(action);
@@ -63,14 +65,13 @@ public class InputManager implements IInputManager {
         return Gdx.input.isKeyJustPressed(keyCode);
     }
 
-
-    // Optional helper
-
+    // Reads specific device state
     public InputState readDevice(int index) {
         if (index < 0 || index >= inputDevices.size()) return new InputState();
         return inputDevices.get(index).getInputState();
     }
 
+    // Clears registered devices
     public void clearDevices() {
         inputDevices.clear();
     }

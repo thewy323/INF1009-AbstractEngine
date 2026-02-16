@@ -13,6 +13,7 @@ import com.inf1009.engine.entity.StaticEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
 import com.inf1009.engine.interfaces.IMovementManager;
 import com.inf1009.engine.interfaces.IInputManager;
+import com.inf1009.engine.interfaces.ISoundManager;
 import com.inf1009.engine.manager.SceneManager;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class SimulatorScene extends Scene {
     private final IEntityProvider entityProvider;
     private final IMovementManager movementManager;
     private final IInputManager inputManager;
+    private final ISoundManager soundManager;
     private final SceneManager sceneManager;
     private final SpriteBatch batch;
 
@@ -33,22 +35,26 @@ public class SimulatorScene extends Scene {
     // Demo entities
     private DynamicEntity controllableEntity;
     private DynamicEntity autonomousEntity;
-    private StaticEntity boundarySurface;
+    private StaticEntity primarySurface;     // Ground
+    private StaticEntity secondarySurface;   // Platform
 
-    // Rendering utilities
+    // Rendering helpers
     private ShapeRenderer shapeRenderer;
     private BitmapFont overlayFont;
 
+    // Constructor injects engine systems
     public SimulatorScene(
             IEntityProvider entityProvider,
             IMovementManager movementManager,
             IInputManager inputManager,
+            ISoundManager soundManager,
             SpriteBatch batch,
             SceneManager sceneManager
     ) {
         this.entityProvider = entityProvider;
         this.movementManager = movementManager;
         this.inputManager = inputManager;
+        this.soundManager = soundManager;
         this.batch = batch;
         this.sceneManager = sceneManager;
     }
@@ -56,19 +62,21 @@ public class SimulatorScene extends Scene {
     @Override
     public void show() {
 
-        shapeRenderer = new ShapeRenderer(); // Initialize renderer
-        overlayFont = new BitmapFont();      // Initialize overlay font
-
-        entityProvider.clear(); // Reset simulation world
+        shapeRenderer = new ShapeRenderer();     // Initialize renderer
+        overlayFont = new BitmapFont();          // Initialize font
+        entityProvider.clear();                  // Reset world state
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
-        boundarySurface = new StaticEntity(0, 0, w, 40); // Ground surface
-        controllableEntity = new DynamicEntity(200, 200, 45, 45); // Player entity
-        autonomousEntity = new DynamicEntity(w / 2f, h - 80f, 80, 80); // Falling entity
+        primarySurface = new StaticEntity(0, 0, w, 40);
+        secondarySurface = new StaticEntity(250, 150, 150, 20);
 
-        entityProvider.addEntity(boundarySurface);
+        controllableEntity = new DynamicEntity(200, 200, 45, 45);
+        autonomousEntity = new DynamicEntity(w / 2f, h - 80f, 80, 80);
+
+        entityProvider.addEntity(primarySurface);
+        entityProvider.addEntity(secondarySurface);
         entityProvider.addEntity(controllableEntity);
         entityProvider.addEntity(autonomousEntity);
 
@@ -80,29 +88,29 @@ public class SimulatorScene extends Scene {
     public void render(float dt) {
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            sceneManager.setScene("end"); // Transition to end scene
+            sceneManager.setScene("end");    // Scene transition
         }
 
-        clearScreen(); // Clear frame
+        clearScreen();
 
         if (simulationRunning) {
-            update(dt); // Update simulation
+            update(dt);                     // Main simulation update
         }
 
-        renderWorld();   // Draw entities
-        renderOverlay(); // Draw UI overlay
+        renderWorld();                      // Draw entities
+        renderOverlay();                    // Draw UI
     }
 
+    // Core simulation logic
     private void update(float dt) {
 
-        simulationTime += dt; // Update timer
-
-        inputManager.update(); // Update input system
+        simulationTime += dt;
+        inputManager.update();
 
         float moveX = inputManager.getInputState().getMoveX();
         boolean jump = inputManager.getInputState().isJump();
 
-        movementManager.applyInput(controllableEntity, moveX, 0f, 300f); // Apply horizontal movement
+        movementManager.applyInput(controllableEntity, moveX, 0f, 300f);
 
         if (jump && Math.abs(controllableEntity.getVelocity().y) < 0.1f) {
             Vector2 v = controllableEntity.getVelocity();
@@ -110,34 +118,90 @@ public class SimulatorScene extends Scene {
             controllableEntity.setVelocity(v);
         }
 
-        movementManager.applyGravity(controllableEntity, 1200f * dt); // Apply gravity to player
-        movementManager.applyGravity(autonomousEntity, 900f * dt);    // Apply gravity to hazard
+        movementManager.applyGravity(controllableEntity, 1200f * dt);
+        movementManager.applyGravity(autonomousEntity, 900f * dt);
 
-        movementManager.applyVelocity(controllableEntity, dt); // Update player position
-        movementManager.applyVelocity(autonomousEntity, dt);   // Update hazard position
+        movementManager.applyVelocity(controllableEntity, dt);
+        movementManager.applyVelocity(autonomousEntity, dt);
 
-        clampToWorld(controllableEntity); // Constrain player inside screen
+        resolveLanding(controllableEntity);   // Handle surface landing
+        clampToWorld(controllableEntity);     // Keep inside screen
 
-        if (autonomousEntity.getY() <= boundarySurface.getY() + boundarySurface.getHeight()) {
-            respawnAutonomousEntity(); // Respawn falling entity
+        if (autonomousEntity.getBounds().overlaps(controllableEntity.getBounds())) {
+            soundManager.playSound("audio/hit.wav");
+            respawnAutonomousEntity();
+            return;
         }
 
-        if (controllableEntity.getY() <= boundarySurface.getY() + boundarySurface.getHeight()) {
+        if (autonomousEntity.getBounds().overlaps(secondarySurface.getBounds())) {
+            respawnAutonomousEntity();
+            return;
+        }
 
-            controllableEntity.setPosition(
-                    controllableEntity.getX(),
-                    boundarySurface.getY() + boundarySurface.getHeight()
-            );
-
-            Vector2 v = controllableEntity.getVelocity();
-            v.y = 0;
-            controllableEntity.setVelocity(v);
+        if (autonomousEntity.getY() <= primarySurface.getY() + primarySurface.getHeight()) {
+            respawnAutonomousEntity();
         }
     }
 
+    // Resolves vertical landing on static surfaces
+    private void resolveLanding(DynamicEntity entity) {
+
+        List<GameEntity> entities = entityProvider.getEntities();
+
+        for (GameEntity e : entities) {
+
+            if (e instanceof StaticEntity) {
+
+                StaticEntity surface = (StaticEntity) e;
+
+                boolean falling = entity.getVelocity().y <= 0;
+
+                boolean horizontalOverlap =
+                        entity.getX() + entity.getWidth() > surface.getX() &&
+                        entity.getX() < surface.getX() + surface.getWidth();
+
+                boolean touchingTop =
+                        entity.getY() >= surface.getY() + surface.getHeight() - 10 &&
+                        entity.getY() <= surface.getY() + surface.getHeight() + 10;
+
+                if (falling && horizontalOverlap && touchingTop) {
+
+                    entity.setPosition(
+                            entity.getX(),
+                            surface.getY() + surface.getHeight()
+                    );
+
+                    Vector2 v = entity.getVelocity();
+                    v.y = 0;
+                    entity.setVelocity(v);
+                }
+            }
+        }
+    }
+
+    // Constrains entity within screen bounds
+    private void clampToWorld(DynamicEntity entity) {
+
+        float worldWidth = Gdx.graphics.getWidth();
+
+        if (entity.getX() < 0)
+            entity.setPosition(0, entity.getY());
+
+        if (entity.getX() + entity.getWidth() > worldWidth)
+            entity.setPosition(worldWidth - entity.getWidth(), entity.getY());
+
+        if (entity.getY() < 0) {
+            entity.setPosition(entity.getX(), 0);
+            Vector2 v = entity.getVelocity();
+            v.y = 0;
+            entity.setVelocity(v);
+        }
+    }
+
+    // Respawns the autonomous entity at a random top position
     private void respawnAutonomousEntity() {
 
-        entityProvider.removeEntity(autonomousEntity); // Remove old instance
+        entityProvider.removeEntity(autonomousEntity);
 
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -148,30 +212,10 @@ public class SimulatorScene extends Scene {
                 80, 80
         );
 
-        entityProvider.addEntity(autonomousEntity); // Add new instance
+        entityProvider.addEntity(autonomousEntity);
     }
 
-    private void clampToWorld(DynamicEntity entity) {
-
-        float worldWidth = Gdx.graphics.getWidth();
-        float worldHeight = Gdx.graphics.getHeight();
-
-        if (entity.getX() < 0)
-            entity.setPosition(0, entity.getY());
-
-        if (entity.getX() + entity.getWidth() > worldWidth)
-            entity.setPosition(worldWidth - entity.getWidth(), entity.getY());
-
-        if (entity.getY() + entity.getHeight() > worldHeight) {
-            entity.setPosition(entity.getX(),
-                    worldHeight - entity.getHeight());
-
-            Vector2 v = entity.getVelocity();
-            v.y = 0;
-            entity.setVelocity(v);
-        }
-    }
-
+    // Renders all entities
     private void renderWorld() {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -182,6 +226,8 @@ public class SimulatorScene extends Scene {
 
             if (e == controllableEntity)
                 shapeRenderer.setColor(0f, 0.8f, 1f, 1f);
+            else if (e == secondarySurface)
+                shapeRenderer.setColor(0.3f, 0.8f, 0.3f, 1f);
             else
                 shapeRenderer.setColor(1f, 0f, 0f, 1f);
 
@@ -192,6 +238,7 @@ public class SimulatorScene extends Scene {
         shapeRenderer.end();
     }
 
+    // Renders overlay UI
     private void renderOverlay() {
 
         batch.begin();
@@ -211,8 +258,8 @@ public class SimulatorScene extends Scene {
         batch.end();
     }
 
+    // Clears the frame buffer
     private void clearScreen() {
-
         Gdx.gl.glClearColor(0.1f, 0.12f, 0.14f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
@@ -226,7 +273,8 @@ public class SimulatorScene extends Scene {
         overlayFont.dispose();
     }
 
+    // External spawn helper
     public void spawnEntity(GameEntity entity) {
-        entityProvider.addEntity(entity); // Add entity to simulation
+        entityProvider.addEntity(entity);
     }
 }

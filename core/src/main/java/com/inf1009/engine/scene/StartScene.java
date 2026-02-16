@@ -7,52 +7,57 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.inf1009.engine.GameMaster;
 
+// Main menu scene providing navigation to simulation and settings
 public class StartScene extends Scene {
 
+    // Reference to core game controller
     private final GameMaster game;
 
+    // Rendering utilities
     private ShapeRenderer shape;
     private BitmapFont font;
     private SpriteBatch batch;
 
-    // Buttons
+    // Button bounds
     private float startX = 220, startY = 280, startW = 200, startH = 60;
     private float settingsX = 220, settingsY = 200, settingsW = 200, settingsH = 60;
     private float exitX  = 220, exitY  = 120, exitW  = 200, exitH  = 60;
 
+    // Injects main game reference
     public StartScene(GameMaster game) {
         this.game = game;
     }
 
     @Override
     public void show() {
-        shape = new ShapeRenderer();
-        font = new BitmapFont();
-        batch = game.getBatch();
+        shape = new ShapeRenderer();    // Initialize button renderer
+        font = new BitmapFont();        // Initialize font
+        batch = game.getBatch();        // Use shared batch
         isLoaded = true;
     }
 
     @Override
     public void render(float dt) {
 
+        // Clear screen
         Gdx.gl.glClearColor(0.08f, 0.08f, 0.08f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // Draw buttons
+        // Draw button rectangles
         shape.begin(ShapeRenderer.ShapeType.Filled);
         shape.rect(startX, startY, startW, startH);
         shape.rect(settingsX, settingsY, settingsW, settingsH);
         shape.rect(exitX, exitY, exitW, exitH);
         shape.end();
 
-        // Draw text
+        // Draw button labels
         batch.begin();
         font.draw(batch, "START", startX + 70, startY + 38);
         font.draw(batch, "SETTINGS", settingsX + 55, settingsY + 38);
         font.draw(batch, "EXIT", exitX + 80, exitY + 38);
         batch.end();
 
-        // Button logic
+        // Handle button interactions
         if (isClicked(startX, startY, startW, startH)) {
             game.getSceneManager().setScene("sim");
         }
@@ -64,7 +69,9 @@ public class StartScene extends Scene {
         }
     }
 
+    // Detects mouse click inside button bounds
     private boolean isClicked(float x, float y, float w, float h) {
+
         if (!Gdx.input.justTouched()) return false;
 
         float mx = Gdx.input.getX();

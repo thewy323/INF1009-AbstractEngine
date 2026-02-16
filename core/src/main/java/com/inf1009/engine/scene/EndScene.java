@@ -7,18 +7,22 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.inf1009.engine.GameMaster;
 
+// Scene displayed after simulation ends
 public class EndScene extends Scene {
 
+    // Reference to core game controller
     private final GameMaster game;
 
+    // Rendering utilities
     private ShapeRenderer shape;
     private BitmapFont font;
     private SpriteBatch batch;
 
-    // Only two buttons
+    // Button bounds
     private float restartX = 220, restartY = 240, restartW = 200, restartH = 60;
     private float menuX    = 220, menuY    = 160, menuW    = 200, menuH    = 60;
 
+    // Injects main game reference
     public EndScene(GameMaster game) {
         this.game = game;
     }
@@ -53,7 +57,7 @@ public class EndScene extends Scene {
         font.draw(batch, "MAIN MENU", menuX + 40, menuY + 38);
         batch.end();
 
-        // Click handling
+        // Handle clicks
         if (isClicked(restartX, restartY, restartW, restartH)) {
             game.getSceneManager().setScene("sim");
         }
@@ -62,6 +66,7 @@ public class EndScene extends Scene {
         }
     }
 
+    // Detects click inside button area
     private boolean isClicked(float x, float y, float w, float h) {
 
         if (!Gdx.input.justTouched()) return false;
@@ -76,13 +81,11 @@ public class EndScene extends Scene {
 
     @Override
     public void dispose() {
-
         if (shape != null) shape.dispose();
         if (font != null) font.dispose();
     }
 
     @Override
-    public void resize(int width, int height) {
-    }
-
+    public void resize(int width, int height) {}
 }
+

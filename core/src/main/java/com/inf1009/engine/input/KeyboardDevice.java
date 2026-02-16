@@ -5,21 +5,25 @@ import com.badlogic.gdx.Input;
 import java.util.EnumMap;
 import java.util.Map;
 
+// Concrete keyboard input implementation
 public class KeyboardDevice extends InputDevice {
 
-    // Key enums
+    // Logical key identifiers
     public enum Key { LEFT, RIGHT, UP, DOWN, JUMP }
+
+    // Key state tracking
     public enum ButtonState { UP, DOWN }
 
-    // Fields
     private Map<Key, ButtonState> keyStates = new EnumMap<>(Key.class);
+
+    // Key codes
     private final int leftKey;
     private final int rightKey;
     private final int upKey;
     private final int downKey;
     private final int jumpKey;
 
-    // Constructor
+    // Creates keyboard device with custom keys
     public KeyboardDevice(int leftKey, int rightKey, int upKey, int downKey, int jumpKey) {
         this.leftKey = leftKey;
         this.rightKey = rightKey;
@@ -33,7 +37,7 @@ public class KeyboardDevice extends InputDevice {
         defineActions();
     }
 
-    // Presets
+    // WASD preset
     public static KeyboardDevice wasd() {
         return new KeyboardDevice(
                 Input.Keys.A,
@@ -44,6 +48,7 @@ public class KeyboardDevice extends InputDevice {
         );
     }
 
+    // Arrow keys preset
     public static KeyboardDevice arrows() {
         return new KeyboardDevice(
                 Input.Keys.LEFT,
@@ -54,7 +59,7 @@ public class KeyboardDevice extends InputDevice {
         );
     }
 
-    // Binding setup
+    // Defines logical key bindings
     @Override
     public void defineBindings() {
         setBinding("left", leftKey);
@@ -67,7 +72,7 @@ public class KeyboardDevice extends InputDevice {
     @Override
     public void defineActions() {}
 
-    // Input reading
+    // Reads current keyboard state
     @Override
     public void readInput() {
 

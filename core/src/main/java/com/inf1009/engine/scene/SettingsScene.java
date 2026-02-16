@@ -9,15 +9,19 @@ import com.inf1009.engine.manager.SceneManager;
 import com.inf1009.engine.manager.InputManager;
 import com.inf1009.engine.interfaces.ISoundManager;
 
+// Scene for runtime configuration such as audio control
 public class SettingsScene extends Scene {
 
+    // Engine systems used by settings
     private final SceneManager sceneManager;
     private final InputManager inputManager;
     private final SpriteBatch batch;
     private final ISoundManager soundManager;
 
+    // Font for UI rendering
     private BitmapFont font;
 
+    // Injects required systems
     public SettingsScene(
             SceneManager sceneManager,
             InputManager inputManager,
@@ -32,14 +36,14 @@ public class SettingsScene extends Scene {
 
     @Override
     public void show() {
-        font = new BitmapFont();
+        font = new BitmapFont();   // Initialize font
         isLoaded = true;
     }
 
     @Override
     public void render(float dt) {
 
-        update(dt);
+        update(dt);                // Handle input logic
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -51,6 +55,7 @@ public class SettingsScene extends Scene {
         batch.end();
     }
 
+    // Handles settings input actions
     public void update(float dt) {
 
         inputManager.update();

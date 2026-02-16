@@ -10,6 +10,7 @@ import com.inf1009.engine.interfaces.IEntityProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+// Detects and resolves collisions between entities
 public class CollisionManager {
 
     private IEntityProvider entityProvider;
@@ -17,10 +18,12 @@ public class CollisionManager {
     private CollisionHandling handling = new CollisionHandling();
     private List<ICollidableListener> listeners = new ArrayList<>();
 
+    // Injects entity provider
     public CollisionManager(IEntityProvider provider) {
         this.entityProvider = provider;
     }
 
+    // Registers collision listener
     public void addCollisionListener(ICollidableListener listener) {
         if (listener != null && !listeners.contains(listener)) {
             listeners.add(listener);
@@ -31,6 +34,7 @@ public class CollisionManager {
         listeners.remove(listener);
     }
 
+    // Performs collision detection and notifies listeners
     public void checkCollisions() {
 
         List<ICollidable> collidables = new ArrayList<>();
@@ -54,6 +58,7 @@ public class CollisionManager {
         }
     }
 
+    // Called each frame
     public void update() {
         checkCollisions();
     }

@@ -3,9 +3,9 @@ package com.inf1009.engine.entity;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
+// Base class for all entities in the engine
 public abstract class GameEntity {
 
-    // Fields
     protected float x;
     protected float y;
     protected float width;
@@ -13,7 +13,7 @@ public abstract class GameEntity {
     protected Rectangle bounds;
     protected boolean isDestroyed;
 
-    // Constructor
+    // Initializes entity transform and bounds
     public GameEntity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
@@ -23,31 +23,34 @@ public abstract class GameEntity {
         this.isDestroyed = false;
     }
 
-    // Core lifecycle methods
+    // Per-frame update
     public abstract void update(float deltaTime);
+
+    // Rendering hook
     public abstract void render(ShapeRenderer shape);
 
-    // Getters
     public float getX() { return x; }
     public float getY() { return y; }
     public float getWidth() { return width; }
     public float getHeight() { return height; }
     public Rectangle getBounds() { return bounds; }
 
-    // State modifiers
+    // Updates entity position
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
         this.bounds.setPosition(x, y);
     }
 
+    // Updates entity size
     public void setSize(float width, float height) {
         this.width = width;
         this.height = height;
         this.bounds.setSize(width, height);
     }
 
-    // Destruction control
+    // Marks entity for removal
     public void destroy() { this.isDestroyed = true; }
+
     public boolean isDestroyed() { return isDestroyed; }
 }
