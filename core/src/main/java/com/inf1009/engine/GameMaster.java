@@ -9,79 +9,82 @@ import com.inf1009.engine.scene.*;
 import com.inf1009.engine.sound.Sound;
 import com.inf1009.engine.input.KeyboardDevice;
 
-// Core engine bootstrap and system coordinator
 public class GameMaster extends ApplicationAdapter {
 
-    // Core systems
     private SpriteBatch batch;
-    private EntityManager em;
-    private SceneManager sm;
-    private MovementManager mm;
-    private CollisionManager cm;
-    private InputManager io;
-    private SoundManager snd;
+    private EntityManager entityManager;
+    private SceneManager sceneManager;
+    private MovementManager movementManager;
+    private CollisionManager collisionManager;
+    private InputManager inputManager;
+    private SoundManager soundManager;
 
     @Override
     public void create() {
-
         batch = new SpriteBatch();
 
-        // Initialize managers
-        em  = new EntityManager();
-        sm  = new SceneManager();
-        mm  = new MovementManager();
-        io  = new InputManager();
-        snd = new SoundManager();
-        cm  = new CollisionManager(em);
+        entityManager = new EntityManager();
+        sceneManager = new SceneManager();
+        movementManager = new MovementManager();
+        inputManager = new InputManager();
+        soundManager = new SoundManager();
+        collisionManager = new CollisionManager(entityManager);
 
-
-        // Load audio assets
         Sound bgm = new Sound("audio/bgm.wav", true, 100);
         Sound hit = new Sound("audio/hit.wav", false, 100);
 
-        snd.addSound(bgm);
-        snd.addSound(hit);
-        snd.playMusic("audio/bgm.wav");
+        soundManager.addSound(bgm);
+        soundManager.addSound(hit);
+        soundManager.playMusic("audio/bgm.wav");
 
-        // Register input device
-        io.registerDevice(KeyboardDevice.wasd());
+        inputManager.registerDevice(KeyboardDevice.wasd());
 
-        // Register scenes
-        sm.addScene("start", new StartScene(sm, batch));
-        sm.addScene("settings", new SettingsScene(sm, io, snd, batch));
-        sm.addScene("sim", new SimulatorScene(em, mm, io, snd, batch, sm));
-        sm.addScene("end", new EndScene(sm, batch));
-        sm.setScene("start");
+        sceneManager.addScene("start", new StartScene(sceneManager, batch));
+        sceneManager.addScene("settings", new SettingsScene(sceneManager, inputManager, soundManager, batch));
+        sceneManager.addScene("sim", new SimulatorScene(entityManager, movementManager, inputManager, soundManager, batch, sceneManager));
+        sceneManager.addScene("end", new EndScene(sceneManager, batch));
+        sceneManager.setScene("start");
     }
 
     @Override
     public void render() {
-
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         float dt = Gdx.graphics.getDeltaTime();
 
-        em.update(dt);    // Update entities
-        cm.update();      // Check collisions
-        sm.update(dt);    // Update active scene
+        entityManager.update(dt);
+        collisionManager.update();
+        sceneManager.update(dt);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        // Handle window resize
+    }
+
+    @Override
+    public void pause() {
+        // Handle pause (e.g., when app loses focus)
+    }
+
+    @Override
+    public void resume() {
+        // Handle resume (e.g., when app regains focus)
     }
 
     @Override
     public void dispose() {
-
-        sm.dispose();
-
+        sceneManager.dispose();
         if (batch != null)
             batch.dispose();
     }
 
-    // Accessors for engine systems
-    public EntityManager getEntityManager() { return em; }
-    public SceneManager getSceneManager() { return sm; }
-    public MovementManager getMovementManager() { return mm; }
-    public CollisionManager getCollisionManager() { return cm; }
-    public InputManager getIOManager() { return io; }
-    public SoundManager getSoundManager() { return snd; }
+    public EntityManager getEntityManager() { return entityManager; }
+    public SceneManager getSceneManager() { return sceneManager; }
+    public MovementManager getMovementManager() { return movementManager; }
+    public CollisionManager getCollisionManager() { return collisionManager; }
+    public InputManager getInputManager() { return inputManager; }
+    public SoundManager getSoundManager() { return soundManager; }
     public SpriteBatch getBatch() { return batch; }
 }

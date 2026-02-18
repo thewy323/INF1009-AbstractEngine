@@ -32,6 +32,10 @@ public abstract class InputDevice {
         bindings.put(action, inputKeyCode);
     }
 
+    public int getBinding(String action) {
+        return bindings.getOrDefault(action, -1);
+    }
+
     // Associates action name with function
     public void setAction(String action, Runnable actionFunction) {
         inputActions.put(action, actionFunction);

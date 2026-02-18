@@ -68,10 +68,15 @@ public class InputManager implements IInputInterface {
     }
 
     // Binds action to key
+    // In InputManager.java, update rebindKey:
     @Override
     public void rebindKey(String action, int keyCode) {
         keyBindings.put(action, keyCode);
+        for (InputDevice device : inputDevices) {
+            device.setBinding(action, keyCode);
+        }
     }
+
 
     // Retrieves bound key
     @Override
