@@ -1,6 +1,8 @@
 package com.inf1009.engine.manager;
 
+import com.inf1009.engine.entity.DynamicEntity;
 import com.inf1009.engine.entity.GameEntity;
+import com.inf1009.engine.entity.StaticEntity;
 import com.inf1009.engine.interfaces.IEntityProvider;
 import java.util.Collections;
 
@@ -68,5 +70,17 @@ public class EntityManager implements IEntityProvider {
         entities.clear();
         entitiesToAdd.clear();
         entitiesToRemove.clear();
+    }
+
+    // Factory method to create dynamic entity
+    @Override
+    public GameEntity createDynamicEntity(float x, float y, float width, float height) {
+        return new DynamicEntity(x, y, width, height);
+    }
+
+    // Factory method to create static entity
+    @Override
+    public GameEntity createStaticEntity(float x, float y, float width, float height) {
+        return new StaticEntity(x, y, width, height);
     }
 }

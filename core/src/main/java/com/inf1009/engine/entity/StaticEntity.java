@@ -1,6 +1,5 @@
 package com.inf1009.engine.entity;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.inf1009.engine.interfaces.ICollidable;
 
 // Non-moving entity that participates in collision
@@ -16,12 +15,6 @@ public class StaticEntity extends GameEntity implements ICollidable {
     public void update(float deltaTime) {
     }
 
-    // Simple visual rendering
-    @Override
-    public void render(ShapeRenderer shape) {
-        shape.setColor(0.3f, 0.3f, 0.3f, 1f);
-        shape.rect(x, y, width, height);
-    }
 
     // Identifies this entity as static
     @Override

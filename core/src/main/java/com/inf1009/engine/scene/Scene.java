@@ -15,9 +15,6 @@ public abstract class Scene {
     // Called when scene is hidden
     public abstract void hide();
 
-    // Handles screen resizing
-    public abstract void resize(int width, int height);
-
     // Releases scene resources
     public abstract void dispose();
 

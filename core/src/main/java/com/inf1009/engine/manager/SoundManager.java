@@ -1,7 +1,6 @@
 package com.inf1009.engine.manager;
 
-import com.inf1009.engine.entity.DynamicEntity;
-import com.inf1009.engine.entity.GameEntity;
+import com.inf1009.engine.interfaces.ICollidable;
 import com.inf1009.engine.interfaces.ICollidableListener;
 import com.inf1009.engine.interfaces.ISoundInterface;
 import com.inf1009.engine.interfaces.IVolume;
@@ -53,7 +52,7 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundInterfa
         for (Sound s : soundList) {
             if (s.isMusic()) {
                 s.setSoundFile(name);
-                s.setVolume(musicVol);
+                s.setVolume((masterVol * musicVol) / 100);
                 s.playSound(name, true);
                 return;
             }
@@ -171,27 +170,29 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundInterfa
 
     // Triggered by collision manager
     @Override
-    public void onCollision(GameEntity e1, GameEntity e2) {
+    public void onCollision(ICollidable e1, ICollidable e2) {
 
-        if (e1 instanceof DynamicEntity &&
-            e2 instanceof DynamicEntity) {
-
+        if (!e1.isStatic() && !e2.isStatic()) {
             playSound("audio/hit.wav");
         }
     }
 
-    // Applies stored volume values
+    // Applies stored volume values (master acts as global multiplier)
     private void applyVolumes() {
         for (Sound s : soundList) {
-            if (s.isMusic()) s.setVolume(musicVol);
-            else s.setVolume(masterVol);
+            if (s.isMusic()) {
+                // Effective music volume = master * music / 100
+                int effective = (masterVol * musicVol) / 100;
+                s.setVolume(effective);
+            } else {
+                s.setVolume(masterVol);
+            }
         }
     }
 
     // Clamps volume between 0–100
     private int clamp(int v) {
         if (v < 0) return 0;
-        if (v > 100) return 100;
-        return v;
+        return Math.min(v, 100);
     }
 }

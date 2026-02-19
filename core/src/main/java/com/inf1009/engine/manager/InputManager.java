@@ -1,8 +1,10 @@
 package com.inf1009.engine.manager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.input.InputDevice;
 import com.inf1009.engine.input.InputState;
+import com.inf1009.engine.input.MouseDevice;
 import com.inf1009.engine.interfaces.IInputInterface;
 
 import java.util.ArrayList;
@@ -15,6 +17,9 @@ public class InputManager implements IInputInterface {
 
     // Registered input devices
     private List<InputDevice> inputDevices;
+
+    // Mouse device reference for direct access
+    private MouseDevice mouseDevice;
 
     // Stores merged player input
     private InputState playerInput;
@@ -36,7 +41,13 @@ public class InputManager implements IInputInterface {
 
     // Registers input device
     public void registerDevice(InputDevice device) {
-        if (device != null) inputDevices.add(device);
+        if (device != null) {
+            inputDevices.add(device);
+            // Track mouse device separately for direct access
+            if (device instanceof MouseDevice) {
+                this.mouseDevice = (MouseDevice) device;
+            }
+        }
     }
 
     // Polls all devices and processes input
@@ -67,8 +78,7 @@ public class InputManager implements IInputInterface {
         return playerInput;
     }
 
-    // Binds action to key
-    // In InputManager.java, update rebindKey:
+    // Binds action to key on all devices
     @Override
     public void rebindKey(String action, int keyCode) {
         keyBindings.put(action, keyCode);
@@ -92,6 +102,54 @@ public class InputManager implements IInputInterface {
         return Gdx.input.isKeyJustPressed(keyCode);
     }
 
+    // Returns true if left mouse button was just clicked
+    @Override
+    public boolean isMouseLeftJustClicked() {
+        return mouseDevice != null && mouseDevice.isLeftJustClicked();
+    }
+
+    // Returns current mouse position
+    @Override
+    public Vector2 getMousePosition() {
+        if (mouseDevice != null) {
+            return mouseDevice.getPosition();
+        }
+        return new Vector2();
+    }
+
+    // Returns position where mouse was clicked
+    @Override
+    public Vector2 getMouseClickPosition() {
+        if (mouseDevice != null) {
+            return mouseDevice.getClickPosition();
+        }
+        return new Vector2();
+    }
+
+    // Checks if a specific key was just pressed this frame
+    @Override
+    public boolean isKeyJustPressed(int keyCode) {
+        return Gdx.input.isKeyJustPressed(keyCode);
+    }
+
+    // Checks if screen was just touched/clicked
+    @Override
+    public boolean isJustTouched() {
+        return Gdx.input.justTouched();
+    }
+
+    // Returns raw X coordinate of input (screen space)
+    @Override
+    public int getInputX() {
+        return Gdx.input.getX();
+    }
+
+    // Returns raw Y coordinate of input (screen space)
+    @Override
+    public int getInputY() {
+        return Gdx.input.getY();
+    }
+
     // Reads specific device state
     public InputState readDevice(int index) {
         if (index < 0 || index >= inputDevices.size()) return new InputState();
@@ -101,5 +159,6 @@ public class InputManager implements IInputInterface {
     // Clears registered devices
     public void clearDevices() {
         inputDevices.clear();
+        mouseDevice = null;
     }
 }

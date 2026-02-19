@@ -7,9 +7,6 @@ public interface IMovable {
     Vector2 getVelocity();
     void setVelocity(Vector2 v);
 
-    Vector2 getAcceleration();
-    void setAcceleration(float x, float y);
-
     Vector2 getDirection();
     void setDirection(float dirX, float dirY);
 

@@ -66,7 +66,4 @@ public class KeyboardDevice extends InputDevice {
         keyStates.put(Key.DOWN, Gdx.input.isKeyPressed(downKey) ? ButtonState.DOWN : ButtonState.UP);
         keyStates.put(Key.JUMP, Gdx.input.isKeyPressed(jumpKey) ? ButtonState.DOWN : ButtonState.UP);
     }
-
-    @Override
-    public void readAction() {}
 }

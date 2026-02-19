@@ -1,5 +1,6 @@
 package com.inf1009.engine.manager;
 
+import com.badlogic.gdx.Gdx;
 import com.inf1009.engine.interfaces.ISceneNavigator;
 import com.inf1009.engine.scene.Scene;
 import java.util.HashMap;
@@ -47,5 +48,9 @@ public class SceneManager implements ISceneNavigator{
         setScene(sceneName);
     }
 
+    // Exits the application
+    @Override
+    public void exitGame() {
+        Gdx.app.exit();
+    }
 }
-

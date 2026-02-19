@@ -3,15 +3,25 @@ package com.inf1009.engine;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.inf1009.engine.manager.*;
 import com.inf1009.engine.scene.*;
 import com.inf1009.engine.sound.Sound;
 import com.inf1009.engine.input.KeyboardDevice;
+import com.inf1009.engine.input.MouseDevice;
 
 public class GameMaster extends ApplicationAdapter {
 
+    // Virtual screen size (game always renders at this resolution)
+    public static final float VIRTUAL_WIDTH = 640;
+    public static final float VIRTUAL_HEIGHT = 480;
+
     private SpriteBatch batch;
+    private OrthographicCamera camera;
+    private Viewport viewport;
     private EntityManager entityManager;
     private SceneManager sceneManager;
     private MovementManager movementManager;
@@ -23,12 +33,19 @@ public class GameMaster extends ApplicationAdapter {
     public void create() {
         batch = new SpriteBatch();
 
+        // Setup camera and viewport
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+        viewport.apply();
+        camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
+
         entityManager = new EntityManager();
         sceneManager = new SceneManager();
         movementManager = new MovementManager();
         inputManager = new InputManager();
         soundManager = new SoundManager();
         collisionManager = new CollisionManager(entityManager);
+        collisionManager.addCollisionListener(soundManager);
 
         Sound bgm = new Sound("audio/bgm.wav", true, 100);
         Sound hit = new Sound("audio/hit.wav", false, 100);
@@ -38,11 +55,12 @@ public class GameMaster extends ApplicationAdapter {
         soundManager.playMusic("audio/bgm.wav");
 
         inputManager.registerDevice(KeyboardDevice.wasd());
+        inputManager.registerDevice(new MouseDevice());
 
-        sceneManager.addScene("start", new StartScene(sceneManager, batch));
-        sceneManager.addScene("settings", new SettingsScene(sceneManager, inputManager, soundManager, batch));
-        sceneManager.addScene("sim", new SimulatorScene(entityManager, movementManager, inputManager, soundManager, batch, sceneManager));
-        sceneManager.addScene("end", new EndScene(sceneManager, batch));
+        sceneManager.addScene("start", new StartScene(sceneManager, inputManager, batch, viewport));
+        sceneManager.addScene("settings", new SettingsScene(sceneManager, inputManager, soundManager, batch, viewport));
+        sceneManager.addScene("sim", new SimulatorScene(entityManager, movementManager, inputManager, soundManager, batch, sceneManager, viewport));
+        sceneManager.addScene("end", new EndScene(sceneManager, inputManager, batch, viewport));
         sceneManager.setScene("start");
     }
 
@@ -50,6 +68,10 @@ public class GameMaster extends ApplicationAdapter {
     public void render() {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // Update camera and apply to batch
+        camera.update();
+        batch.setProjectionMatrix(camera.combined);
 
         float dt = Gdx.graphics.getDeltaTime();
 
@@ -60,7 +82,8 @@ public class GameMaster extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        // Handle window resize
+        viewport.update(width, height);
+        camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
     }
 
     @Override

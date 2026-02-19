@@ -1,6 +1,5 @@
 package com.inf1009.engine.entity;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 
 // Base class for all entities in the engine
@@ -26,8 +25,6 @@ public abstract class GameEntity {
     // Per-frame update
     public abstract void update(float deltaTime);
 
-    // Rendering hook
-    public abstract void render(ShapeRenderer shape);
 
     public float getX() { return x; }
     public float getY() { return y; }

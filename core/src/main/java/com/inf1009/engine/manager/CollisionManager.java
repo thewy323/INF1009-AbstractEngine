@@ -49,11 +49,8 @@ public class CollisionManager {
 
             handling.resolve(p.a, p.b);
 
-            GameEntity e1 = (GameEntity) p.a;
-            GameEntity e2 = (GameEntity) p.b;
-
             for (ICollidableListener listener : listeners) {
-                listener.onCollision(e1, e2);
+                listener.onCollision(p.a, p.b);
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.inf1009.engine.entity;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.inf1009.engine.interfaces.ICollidable;
@@ -9,9 +8,8 @@ import com.inf1009.engine.interfaces.IMovable;
 // Movable entity supporting velocity, direction, and collision
 public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
 
-    private Vector2 velocity = new Vector2();
-    private Vector2 acceleration = new Vector2();
-    private Vector2 direction = new Vector2(1, 0);
+    private final Vector2 velocity = new Vector2();
+    private final Vector2 direction = new Vector2(1, 0);
     private float speed = 0f;
 
     public DynamicEntity(float x, float y, float width, float height) {
@@ -24,14 +22,6 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     @Override
     public void setVelocity(Vector2 v) {
         if (v != null) velocity.set(v);
-    }
-
-    @Override
-    public Vector2 getAcceleration() { return acceleration; }
-
-    @Override
-    public void setAcceleration(float x, float y) {
-        acceleration.set(x, y);
     }
 
     // Applies velocity to position
@@ -65,11 +55,6 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
         velocity.x = direction.x * speed;
     }
 
-    @Override
-    public void render(ShapeRenderer shape) {
-        shape.setColor(0f, 0.8f, 1f, 1f);
-        shape.rect(x, y, width, height);
-    }
 
     @Override
     public boolean isStatic() {
@@ -81,7 +66,7 @@ public class DynamicEntity extends GameEntity implements IMovable, ICollidable {
     public void onCollision(ICollidable other) {
 
         if (!(other instanceof GameEntity)) return;
-        if (other.isStatic() == false) return; // only resolve against static
+        if (!other.isStatic()) return; // only resolve against static
 
         GameEntity g = (GameEntity) other;
 
