@@ -13,10 +13,10 @@ import java.util.List;
 // Detects and resolves collisions between entities
 public class CollisionManager {
 
-    private IEntityProvider entityProvider;
-    private CollisionDetection detection = new CollisionDetection();
-    private CollisionHandling handling = new CollisionHandling();
-    private List<ICollidableListener> listeners = new ArrayList<>();
+    private final IEntityProvider entityProvider;
+    private final CollisionDetection detection = new CollisionDetection();
+    private final CollisionHandling handling = new CollisionHandling();
+    private final List<ICollidableListener> listeners = new ArrayList<>();
 
     // Injects entity provider
     public CollisionManager(IEntityProvider provider) {

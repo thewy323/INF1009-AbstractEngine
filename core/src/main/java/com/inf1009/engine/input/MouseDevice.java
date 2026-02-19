@@ -11,10 +11,10 @@ public class MouseDevice extends InputDevice {
     public enum Key { LEFT, RIGHT, MIDDLE }
     public enum ButtonState { UP, DOWN }
 
-    private Map<Key, ButtonState> keyStates = new EnumMap<>(Key.class);
-    private Map<Key, ButtonState> previousKeyStates = new EnumMap<>(Key.class);
-    private Vector2 position = new Vector2();
-    private Vector2 clickPosition = new Vector2();
+    private final Map<Key, ButtonState> keyStates = new EnumMap<>(Key.class);
+    private final Map<Key, ButtonState> previousKeyStates = new EnumMap<>(Key.class);
+    private final Vector2 position = new Vector2();
+    private final Vector2 clickPosition = new Vector2();
     private boolean leftJustClicked = false;
     private boolean rightJustClicked = false;
 
@@ -56,7 +56,7 @@ public class MouseDevice extends InputDevice {
         rightJustClicked = (previousKeyStates.get(Key.RIGHT) == ButtonState.UP &&
                             keyStates.get(Key.RIGHT) == ButtonState.DOWN);
 
-        // Store click position when left clicked
+        // Store click position when left-clicked
         if (leftJustClicked) {
             clickPosition.set(position);
         }

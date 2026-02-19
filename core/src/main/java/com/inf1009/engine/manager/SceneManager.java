@@ -10,7 +10,7 @@ import java.util.Map;
 public class SceneManager implements ISceneNavigator{
 
     private Scene currentScene;
-    private Map<String, Scene> scenes = new HashMap<>();
+    private final Map<String, Scene> scenes = new HashMap<>();
 
     // Registers a scene by name
     public void addScene(String name, Scene scene) {
@@ -25,10 +25,6 @@ public class SceneManager implements ISceneNavigator{
         if (currentScene != null) currentScene.show();
     }
 
-    // Returns currently active scene
-    public Scene getCurrentScene() {
-        return currentScene;
-    }
 
     // Updates current scene each frame
     public void update(float deltaTime) {

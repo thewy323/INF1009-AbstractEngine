@@ -18,8 +18,4 @@ public abstract class Scene {
     // Releases scene resources
     public abstract void dispose();
 
-    // Returns loading state
-    public boolean isLoaded() {
-        return isLoaded;
-    }
 }

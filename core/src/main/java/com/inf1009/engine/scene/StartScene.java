@@ -81,19 +81,19 @@ public class StartScene extends Scene {
         batch.end();
 
         // Button logic
-        if (isClicked(buttonX, startY, BUTTON_W, BUTTON_H)) {
+        if (isClicked(buttonX, startY)) {
             sceneNavigator.navigateTo("sim");
         }
-        else if (isClicked(buttonX, settingsY, BUTTON_W, BUTTON_H)) {
+        else if (isClicked(buttonX, settingsY)) {
             sceneNavigator.navigateTo("settings");
         }
-        else if (isClicked(buttonX, exitY, BUTTON_W, BUTTON_H)) {
+        else if (isClicked(buttonX, exitY)) {
             sceneNavigator.exitGame();
         }
     }
 
     // Detects click inside button area using viewport coordinates
-    private boolean isClicked(float x, float y, float w, float h) {
+    private boolean isClicked(float x, float y) {
 
         if (!inputInterface.isJustTouched()) return false;
 
@@ -101,8 +101,8 @@ public class StartScene extends Scene {
         Vector2 screenPos = new Vector2(inputInterface.getInputX(), inputInterface.getInputY());
         Vector2 worldCoords = viewport.unproject(screenPos);
 
-        return worldCoords.x >= x && worldCoords.x <= x + w &&
-            worldCoords.y >= y && worldCoords.y <= y + h;
+        return worldCoords.x >= x && worldCoords.x <= x + StartScene.BUTTON_W &&
+            worldCoords.y >= y && worldCoords.y <= y + StartScene.BUTTON_H;
     }
 
     @Override public void hide() {}

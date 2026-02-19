@@ -3,14 +3,13 @@ package com.inf1009.engine.manager;
 import com.inf1009.engine.interfaces.ICollidable;
 import com.inf1009.engine.interfaces.ICollidableListener;
 import com.inf1009.engine.interfaces.ISoundInterface;
-import com.inf1009.engine.interfaces.IVolume;
 import com.inf1009.engine.sound.Sound;
 
 import java.util.ArrayList;
 import java.util.List;
 
 // Manages audio playback, volume control, and collision-triggered SFX
-public class SoundManager implements IVolume, ICollidableListener, ISoundInterface {
+public class SoundManager implements ICollidableListener, ISoundInterface {
 
     // Registered sound assets
     private final List<Sound> soundList = new ArrayList<>();
@@ -87,7 +86,7 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundInterfa
 
         for (Sound s : soundList) {
             if (s.isMusic()) {
-                s.setVolume(musicVol);
+                s.setVolume((masterVol * musicVol) / 100);
                 s.resumeMusic();
                 return;
             }
@@ -147,26 +146,6 @@ public class SoundManager implements IVolume, ICollidableListener, ISoundInterfa
         soundList.clear();
     }
 
-    // IVolume compatibility
-    @Override
-    public int getMasterVol() {
-        return masterVol;
-    }
-
-    @Override
-    public void setMasterVol(int vol) {
-        setMasterVolume(vol);
-    }
-
-    @Override
-    public int getMusicVol() {
-        return musicVol;
-    }
-
-    @Override
-    public void setMusicVol(int vol) {
-        setMusicVolume(vol);
-    }
 
     // Triggered by collision manager
     @Override

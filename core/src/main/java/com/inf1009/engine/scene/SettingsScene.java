@@ -25,8 +25,8 @@ public class SettingsScene extends Scene {
     // Rebinding state
     private boolean waitingForKey = false;
     private String actionToRebind = null;
-    private String[] rebindableActions = {"left", "right", "up", "down", "jump"};
-    private int[] defaultBindings = {Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.S, Input.Keys.SPACE};
+    private final String[] rebindableActions = {"left", "right", "up", "down", "jump"};
+    private final int[] defaultBindings = {Input.Keys.A, Input.Keys.D, Input.Keys.W, Input.Keys.S, Input.Keys.SPACE};
     private int selectedIndex = 0;
 
     // Menu items: 5 key bindings + 2 volume sliders = 7 total
@@ -62,16 +62,13 @@ public class SettingsScene extends Scene {
 
     @Override
     public void render(float dt) {
-        update(dt);
+        update();
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Apply viewport
         viewport.apply();
 
-        // Get virtual screen size from viewport (no GameMaster dependency)
-        float screenW = viewport.getWorldWidth();
-        float screenH = viewport.getWorldHeight();
 
         batch.begin();
         font.draw(batch, "SETTINGS", 280, 400);
@@ -109,11 +106,11 @@ public class SettingsScene extends Scene {
         viewport.apply();
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
 
-        drawSlider(SLIDER_X, 97, soundInterface.getMasterVolume(), selectedIndex == MASTER_VOL_INDEX);
-        drawSlider(SLIDER_X, 67, soundInterface.getMusicVolume(), selectedIndex == MUSIC_VOL_INDEX);
+        drawSlider(97, soundInterface.getMasterVolume(), selectedIndex == MASTER_VOL_INDEX);
+        drawSlider(67, soundInterface.getMusicVolume(), selectedIndex == MUSIC_VOL_INDEX);
     }
 
-    private void update(float dt) {
+    private void update() {
         inputInterface.update();
 
         if (waitingForKey) {
@@ -173,12 +170,12 @@ public class SettingsScene extends Scene {
     }
 
     // Draws a volume slider bar
-    private void drawSlider(float x, float y, int value, boolean isSelected) {
+    private void drawSlider(float y, int value, boolean isSelected) {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Background bar (dark gray)
         shapeRenderer.setColor(0.3f, 0.3f, 0.3f, 1f);
-        shapeRenderer.rect(x, y, SLIDER_W, SLIDER_H);
+        shapeRenderer.rect(SettingsScene.SLIDER_X, y, SLIDER_W, SLIDER_H);
 
         // Filled portion (highlight if selected)
         float fillWidth = (value / 100f) * SLIDER_W;
@@ -187,7 +184,7 @@ public class SettingsScene extends Scene {
         } else {
             shapeRenderer.setColor(0.6f, 0.6f, 0.6f, 1f); // Gray when not selected
         }
-        shapeRenderer.rect(x, y, fillWidth, SLIDER_H);
+        shapeRenderer.rect(SettingsScene.SLIDER_X, y, fillWidth, SLIDER_H);
 
         shapeRenderer.end();
     }

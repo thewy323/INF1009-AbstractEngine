@@ -12,9 +12,9 @@ import java.util.List;
 // Manages lifecycle and updates of all game entities
 public class EntityManager implements IEntityProvider {
 
-    private List<GameEntity> entities = new ArrayList<>();
-    private List<GameEntity> entitiesToAdd = new ArrayList<>();
-    private List<GameEntity> entitiesToRemove = new ArrayList<>();
+    private final List<GameEntity> entities = new ArrayList<>();
+    private final List<GameEntity> entitiesToAdd = new ArrayList<>();
+    private final List<GameEntity> entitiesToRemove = new ArrayList<>();
 
     // Updates entities and processes queues
     public void update(float deltaTime) {

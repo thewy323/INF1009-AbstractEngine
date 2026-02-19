@@ -99,6 +99,7 @@ public class GameMaster extends ApplicationAdapter {
     @Override
     public void dispose() {
         sceneManager.dispose();
+        soundManager.dispose();
         if (batch != null)
             batch.dispose();
     }

@@ -32,7 +32,6 @@ public class SimulatorScene extends Scene {
 
 
     // Simulation state
-    private boolean simulationRunning = true;
     private float simulationTime = 0f;
     private int score = 0;
 
@@ -40,7 +39,7 @@ public class SimulatorScene extends Scene {
     private GameEntity controllableEntity;
     private GameEntity autonomousEntity;
     private GameEntity mouseEntity;
-    private Vector2 mouseTarget = new Vector2();
+    private final Vector2 mouseTarget = new Vector2();
     private boolean hasMouseTarget = false;
     private GameEntity primarySurface;     // Ground
     private GameEntity secondarySurface;   // Platform
@@ -107,9 +106,8 @@ public class SimulatorScene extends Scene {
 
         clearScreen();
 
-        if (simulationRunning) {
-            update(dt);                     // Main simulation update
-        }
+        // Always update; the previous flag was always true
+        update(dt);                     // Main simulation update
 
         renderWorld();                      // Draw entities
         renderOverlay();                    // Draw UI
@@ -214,23 +212,21 @@ public class SimulatorScene extends Scene {
             // Check if this is a static surface (not movable)
             if (!(e instanceof IMovable)) {
 
-                GameEntity surface = e;
-
                 boolean falling = movable.getVelocity().y <= 0;
 
                 boolean horizontalOverlap =
-                        entity.getX() + entity.getWidth() > surface.getX() &&
-                        entity.getX() < surface.getX() + surface.getWidth();
+                        entity.getX() + entity.getWidth() > e.getX() &&
+                        entity.getX() < e.getX() + e.getWidth();
 
                 boolean touchingTop =
-                        entity.getY() >= surface.getY() + surface.getHeight() - 10 &&
-                        entity.getY() <= surface.getY() + surface.getHeight() + 10;
+                        entity.getY() >= e.getY() + e.getHeight() - 10 &&
+                        entity.getY() <= e.getY() + e.getHeight() + 10;
 
                 if (falling && horizontalOverlap && touchingTop) {
 
                     entity.setPosition(
                             entity.getX(),
-                            surface.getY() + surface.getHeight()
+                            e.getY() + e.getHeight()
                     );
 
                     Vector2 v = movable.getVelocity();
@@ -362,10 +358,5 @@ public class SimulatorScene extends Scene {
     public void dispose() {
         shapeRenderer.dispose();
         overlayFont.dispose();
-    }
-
-    // External spawn helper
-    public void spawnEntity(GameEntity entity) {
-        entityProvider.addEntity(entity);
     }
 }

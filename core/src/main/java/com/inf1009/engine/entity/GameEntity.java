@@ -39,13 +39,6 @@ public abstract class GameEntity {
         this.bounds.setPosition(x, y);
     }
 
-    // Updates entity size
-    public void setSize(float width, float height) {
-        this.width = width;
-        this.height = height;
-        this.bounds.setSize(width, height);
-    }
-
     // Marks entity for removal
     public void destroy() { this.isDestroyed = true; }
 

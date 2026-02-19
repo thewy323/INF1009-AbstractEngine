@@ -16,16 +16,16 @@ import java.util.Map;
 public class InputManager implements IInputInterface {
 
     // Registered input devices
-    private List<InputDevice> inputDevices;
+    private final List<InputDevice> inputDevices;
 
     // Mouse device reference for direct access
     private MouseDevice mouseDevice;
 
     // Stores merged player input
-    private InputState playerInput;
+    private final InputState playerInput;
 
     // Key bindings for action mapping
-    private Map<String, Integer> keyBindings = new HashMap<>();
+    private final Map<String, Integer> keyBindings = new HashMap<>();
 
     // Default constructor
     public InputManager() {
@@ -33,11 +33,6 @@ public class InputManager implements IInputInterface {
         this.playerInput = new InputState();
     }
 
-    // Optional constructor matching UML
-    public InputManager(List<InputDevice> inputDevices) {
-        this.inputDevices = inputDevices != null ? inputDevices : new ArrayList<>();
-        this.playerInput = new InputState();
-    }
 
     // Registers input device
     public void registerDevice(InputDevice device) {
@@ -148,17 +143,5 @@ public class InputManager implements IInputInterface {
     @Override
     public int getInputY() {
         return Gdx.input.getY();
-    }
-
-    // Reads specific device state
-    public InputState readDevice(int index) {
-        if (index < 0 || index >= inputDevices.size()) return new InputState();
-        return inputDevices.get(index).getInputState();
-    }
-
-    // Clears registered devices
-    public void clearDevices() {
-        inputDevices.clear();
-        mouseDevice = null;
     }
 }
