@@ -103,12 +103,4 @@ public class GameMaster extends ApplicationAdapter {
         if (batch != null)
             batch.dispose();
     }
-
-    public EntityManager getEntityManager() { return entityManager; }
-    public SceneManager getSceneManager() { return sceneManager; }
-    public MovementManager getMovementManager() { return movementManager; }
-    public CollisionManager getCollisionManager() { return collisionManager; }
-    public InputManager getInputManager() { return inputManager; }
-    public SoundManager getSoundManager() { return soundManager; }
-    public SpriteBatch getBatch() { return batch; }
 }
