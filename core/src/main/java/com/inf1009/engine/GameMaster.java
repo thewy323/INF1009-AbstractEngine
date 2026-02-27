@@ -22,12 +22,23 @@ public class GameMaster extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Viewport viewport;
-    private EntityManager entityManager;
-    private SceneManager sceneManager;
-    private MovementManager movementManager;
-    private CollisionManager collisionManager;
-    private InputManager inputManager;
-    private SoundManager soundManager;
+
+    private final EntityManager entityManager;
+    private final SceneManager sceneManager;
+    private final MovementManager movementManager;
+    private final CollisionManager collisionManager;
+    private final InputManager inputManager;
+    private final SoundManager soundManager;
+
+    public GameMaster() {
+        this.entityManager = new EntityManager();
+        this.movementManager = new MovementManager();
+        this.inputManager = new InputManager();
+        this.soundManager = new SoundManager();
+        this.sceneManager = new SceneManager();
+        this.collisionManager = new CollisionManager(entityManager);
+        collisionManager.addCollisionListener(soundManager);
+    }
 
     @Override
     public void create() {
@@ -39,24 +50,18 @@ public class GameMaster extends ApplicationAdapter {
         viewport.apply();
         camera.position.set(VIRTUAL_WIDTH / 2f, VIRTUAL_HEIGHT / 2f, 0);
 
-        entityManager = new EntityManager();
-        sceneManager = new SceneManager();
-        movementManager = new MovementManager();
-        inputManager = new InputManager();
-        soundManager = new SoundManager();
-        collisionManager = new CollisionManager(entityManager);
-        collisionManager.addCollisionListener(soundManager);
-
+        // Audio Assets
         Sound bgm = new Sound("audio/bgm.wav", true, 100);
         Sound hit = new Sound("audio/hit.wav", false, 100);
-
         soundManager.addSound(bgm);
         soundManager.addSound(hit);
         soundManager.playMusic("audio/bgm.wav");
 
+        //input devices
         inputManager.registerDevice(KeyboardDevice.wasd());
         inputManager.registerDevice(new MouseDevice());
 
+        //scenes
         sceneManager.addScene("start", new StartScene(sceneManager, inputManager, batch, viewport));
         sceneManager.addScene("settings", new SettingsScene(sceneManager, inputManager, soundManager, batch, viewport));
         sceneManager.addScene("sim", new SimulatorScene(entityManager, movementManager, inputManager, soundManager, batch, sceneManager, viewport));
@@ -103,4 +108,12 @@ public class GameMaster extends ApplicationAdapter {
         if (batch != null)
             batch.dispose();
     }
+
+    public EntityManager getEntityManager() { return entityManager; }
+    public SceneManager getSceneManager() { return sceneManager; }
+    public MovementManager getMovementManager() { return movementManager; }
+    public CollisionManager getCollisionManager() { return collisionManager; }
+    public InputManager getInputManager() { return inputManager; }
+    public SoundManager getSoundManager() { return soundManager; }
+    public SpriteBatch getBatch() { return batch; }
 }
